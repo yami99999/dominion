@@ -1,9 +1,12 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <map>
 #include <fstream>
 #include <ctime>
-#include <map>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 class GameLogger {
 private:
@@ -15,13 +18,13 @@ private:
 public:
     GameLogger() : startTime(std::time(nullptr)) {}
     
-    void logAction(const std::string& playerName, const std::string& action) {
+    void logAction(const std::string& playerName, const std::string& action) const {
         std::time_t now = std::time(nullptr);
         char timeStr[20];
         strftime(timeStr, sizeof(timeStr), "%H:%M:%S", localtime(&now));
         
         std::string logEntry = std::string(timeStr) + " - " + playerName + ": " + action;
-        logs.push_back(logEntry);
+        const_cast<GameLogger*>(this)->logs.push_back(logEntry);
     }
     
     void recordCardBought(const std::string& cardName) {
@@ -32,50 +35,71 @@ public:
         cardsPlayed[cardName]++;
     }
     
+    json getJson() const {
+        json j;
+        j["start_time"] = startTime;
+        j["duration"] = std::time(nullptr) - startTime;
+        j["logs"] = logs;
+        j["statistics"]["cards_bought"] = cardsBought;
+        j["statistics"]["cards_played"] = cardsPlayed;
+        return j;
+    }
+    
+    void loadFromJson(const json& j) {
+        try {
+            startTime = j["start_time"];
+            logs = j["logs"].get<std::vector<std::string>>();
+            cardsBought = j["statistics"]["cards_bought"].get<std::map<std::string, int>>();
+            cardsPlayed = j["statistics"]["cards_played"].get<std::map<std::string, int>>();
+        } catch (const json::exception& e) {
+            throw std::runtime_error("加载日志数据失败: " + std::string(e.what()));
+        }
+    }
+    
     void saveToFile(const std::string& filename) const {
         std::ofstream out(filename);
-        if (!out) return;
-        
-        // 写入游戏时长
-        std::time_t duration = std::time(nullptr) - startTime;
-        out << "游戏时长: " << duration / 60 << "分" << duration % 60 << "秒\n\n";
-        
-        // 写入游戏日志
-        out << "=== 游戏日志 ===\n";
-        for (const auto& log : logs) {
-            out << log << "\n";
-        }
-        
-        // 写入统计信息
-        out << "\n=== 统计信息 ===\n";
-        out << "购买的卡片:\n";
-        for (const auto& [card, count] : cardsBought) {
-            out << card << ": " << count << "张\n";
-        }
-        
-        out << "\n使用的卡片:\n";
-        for (const auto& [card, count] : cardsPlayed) {
-            out << card << ": " << count << "次\n";
+        if (out) {
+            json j = getJson();
+            out << std::setw(4) << j << std::endl;
         }
     }
     
     void loadFromFile(const std::string& filename) {
         std::ifstream in(filename);
         if (!in) {
-            throw std::runtime_error("无法打开日志文件");
+            throw std::runtime_error("无法打开日志文件: " + filename);
         }
         
-        logs.clear();
-        cardsBought.clear();
-        cardsPlayed.clear();
-        
-        std::string line;
-        while (std::getline(in, line)) {
-            if (line.find(" - ") != std::string::npos) {
-                logs.push_back(line);
-            }
+        try {
+            json j = json::parse(in);
+            loadFromJson(j);
+        } catch (const json::exception& e) {
+            throw std::runtime_error("解析日志文件失败: " + std::string(e.what()));
         }
     }
     
+    json getStatistics() const {
+        json stats;
+        stats["game_duration"]["seconds"] = std::time(nullptr) - startTime;
+        stats["cards_bought"] = cardsBought;
+        stats["cards_played"] = cardsPlayed;
+        stats["total_actions"] = logs.size();
+        return stats;
+    }
+    
+    std::vector<std::string> getRecentLogs(int count = 5) const {
+        std::vector<std::string> recent;
+        auto start = logs.size() > count ? logs.end() - count : logs.begin();
+        recent.assign(start, logs.end());
+        return recent;
+    }
+    
     const std::vector<std::string>& getLogs() const { return logs; }
+    
+    void clear() {
+        logs.clear();
+        cardsBought.clear();
+        cardsPlayed.clear();
+        startTime = std::time(nullptr);
+    }
 }; 
