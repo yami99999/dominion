@@ -55,8 +55,8 @@ int main() {
         
         // 如果在 try 块中发生异常（例如文件不存在、解析错误等），捕捉异常并处理。 
         catch (const std::exception& e) {
-            std::cout << "加载存档失败: " << e.what() << "\n"; // 输出加载存档失败的错误信息，e.what() 提供具体的异常描述
-            std::cout << "是否开始新游戏? (y/n): ";
+            std::cout << "Échec du chargement de la sauvegarde : " << e.what() << "\n"; // 输出加载存档失败的错误信息，e.what() 提供具体的异常描述
+            std::cout << "Commencer une nouvelle partie ?(y/n): ";
             std::getline(std::cin, response);
 
             // 如果用户输入的不是 "y" 或 "yes"，则程序结束，返回 0。
@@ -74,7 +74,7 @@ int main() {
     int playerCount; // 用于存储玩家数量
     // 使用 do-while 循环，确保用户输入的玩家数量在 2 到 4 之间。
     do {
-        std::cout << "\n请输入玩家数量 (2-4): ";
+        std::cout << "\nVeuillez entrer le nombre de joueurs (2-4): ";
         std::cin >> playerCount; 
         
         if (std::cin.fail()) { // 检查输入是否失败（例如用户输入了非数字字符）

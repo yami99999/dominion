@@ -68,9 +68,9 @@ std::shared_ptr<Card> Card::createCard(const std::string& cardName) {
     } 
     
     catch (const std::exception& e) {
-        throw std::runtime_error("创建卡片失败: " + cardName + " - " + e.what());
+        throw std::runtime_error("Échec de la création de la carte : " + cardName + " - " + e.what()); // 创建卡片失败: 
     }
     
     // 如果卡牌名称不在已知列表中，抛出异常，提示未知的卡牌名称。
-    throw std::runtime_error("未知的卡片: " + cardName);
+    throw std::runtime_error("Carte inconnue: " + cardName); // 未知的卡片
 } 

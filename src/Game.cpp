@@ -22,7 +22,7 @@ Game::Game(int numPlayers) : currentPlayer(0), turnCount(1) {
         // 使用玩家名字构造一个 Player 对象，并添加到 players 向量中
         for (int i = 0; i < numPlayers; i++) {
             std::string playerName;
-            std::cout << "请输入玩家 " << (i + 1) << " 的名字: ";
+            std::cout << "Saisis le player - " << (i + 1) << " de nom: ";
             std::getline(std::cin, playerName);
             players.emplace_back(playerName); 
         }
@@ -167,13 +167,13 @@ void Game::playGame() {
         }
         
         // 4.询问是否保存游戏
-        std::cout << "\n输入 'save' 保存游戏，'stats' 查看统计信息，或按回车继续: ";
+        std::cout << "\nEntrez 'save' pour sauvegarder la partie, 'stats' pour voir les statistiques, ou appuyez sur Entrée pour continuer: ";
         std::string command;
         std::getline(std::cin, command);
         
         // 5.如果用户输入 "save"（不区分大小写），执行保存游戏的流程。
         if (Utils::equalIgnoreCase(command, "save")) {
-            std::cout << "请输入存档文件名 (直接回车使用默认名称 'dominion_save.txt'): ";
+            std::cout << "Veuillez entrer le nom du fichier de sauvegarde (appuyez sur Entrée pour utiliser le nom par défaut 'dominion_save.txt') :\n ";
             std::string filename;
             std::getline(std::cin, filename);
             
@@ -188,13 +188,13 @@ void Game::playGame() {
             std::ifstream checkFile(filename);
             if (checkFile.good()) {
                 checkFile.close();
-                std::cout << "文件 '" << filename << "' 已存在，是否覆盖? (y/n): ";
+                std::cout << "Le fichier '" << filename << "' existe déjà, voulez-vous l'écraser ?  (y/n): ";
                 std::string response;
                 std::getline(std::cin, response);
                 
                 if (!Utils::equalIgnoreCase(response, "y") && 
                     !Utils::equalIgnoreCase(response, "yes")) {
-                    std::cout << "取消保存\n";
+                    std::cout << "Annulation de la sauvegarde.\n";
                     continue;
                 }
             }
@@ -344,7 +344,7 @@ void Game::playBuyPhase() {
 
         // 提示玩家购买
         std::cout << "\n[" << currentPlayerRef.getName() 
-                 << "] Saisis le nom de la carte à acheter(devoir le même cas), ou tape 'done' pour terminer la phase d'achat.  ";
+                 << "] Saisis le nom de la carte à acheter, ou tape 'done' pour terminer la phase d'achat:  \n";
         
         
         // 玩家输入
@@ -395,25 +395,25 @@ void Game::playBuyPhase() {
 
 
                 // 输出购买成功信息
-                std::cout << "成功购买 " << it->first << "!\n";
+                std::cout << "Achat réussi " << it->first << "!\n"; // 成功购买
                 
 
                 // 检查是否需要提前结束购买阶段
                     // 如果玩家的购买次数已用完，输出提示并跳出循环。
                     // 如果玩家的金币已用完，输出提示并跳出循环
                 if (currentPlayerRef.getBuys() == 0) {
-                    std::cout << "没有剩余购买次数了\n";
+                    std::cout << "Il ne reste plus d'achats.\n"; // 没有剩余购买次数了
                     break;
                 }
                 if (currentPlayerRef.getCoins() == 0) {
-                    std::cout << "没有剩余金币了\n";
+                    std::cout << "Il ne reste plus de pièces.\n"; // 没有剩余金币了
                     break;
                 }
             } 
             
             // 2.若金币不够
             else {
-                std::cout << "金币不足！需要 " << cardCost << " 金币\n";
+                std::cout << "Pièces insuffisantes ! Il vous faut " << cardCost << " pièces\n";
             }
         } 
         
@@ -421,10 +421,10 @@ void Game::playBuyPhase() {
         // 1.若卡片不存在或已售罄
         else {
             if (it == supply.end()) {
-                std::cout << "找不到该卡片\n";
+                std::cout << "Ne trouve pas la carte.\n";
             } 
             else {
-                std::cout << "该卡片已售罄\n";
+                std::cout << "Cette carte est vendue\n";
             }
         }
     }
@@ -458,14 +458,14 @@ bool Game::isGameOver() const {
     // 如果满足任一结束条件，返回 true，表示游戏结束
     // 1. 检查Province堆是否为空
     if (isProvinceEmpty()) {
-        std::cout << "\n*** 游戏结束: Province ��已耗尽! ***\n";
+        std::cout << "\n*** Fin de la partie : La pile de Provinces est épuisée! ***\n";
         return true;
     }
     
     // 2. 检查是否有任意三堆卡牌堆空（括所有类型的卡）
     int emptyPiles = getEmptyPiles();
     if (emptyPiles >= 3) {
-        std::cout << "\n*** 游戏结束: 已有 " << emptyPiles << " 个供应堆耗尽! ***\n";
+        std::cout << "\n*** Fin de la partie : " << emptyPiles << " piles de la réserve sont épuisées ! ***\n";
         return true;
     }
     
@@ -932,9 +932,9 @@ void Game::showSupplyCardDescription(const std::string& cardName) const {
     if (it != supply.end() && !it->second.empty()) {
         std::cout << "\n" << it->second[0]->getDescription() << "\n";
     }   
-    // 否则，输出提示信息表示找不到该卡片。
+    // 否则，输出提示信息表示Ne trouve pas la carte.。
     else {
-        std::cout << "Cette carte n'est pas disponible dans la réserve. \n"; //在供应堆中找不到该卡片。
+        std::cout << "Cette carte n'est pas disponible dans la réserve. \n"; //在供应堆中Ne trouve pas la carte.。
     }
 }
 

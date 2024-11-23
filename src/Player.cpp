@@ -185,7 +185,7 @@ bool Player::playAction(const std::string& cardName, Game& game) {
     // 检查卡牌是否存在
     // 如果未找到卡牌，输出提示并返回 `false`
     if (it == hand.end()) {
-        std::cout << "找不到该卡片!\n";
+        std::cout << "Ne trouve pas la carte.!\n";
         return false;
     }
     // 检查卡牌类型
@@ -314,7 +314,7 @@ void Player::playAllTreasures() {
     auto treasures = getTreasureCards(); // 调用 `getTreasureCards` 方法，获取手牌中的所有财宝卡
     // 检查是否有财宝卡
     if (!treasures.empty()) {
-        std::cout << "自动使用所有财富卡:\n"; // 如果有财宝卡，输出提示信息。
+        std::cout << "Utilisation automatique de toutes les cartes de trésor:\n"; // 如果有财宝卡，输出提示信息。
     }
     
     // 使用每一张财宝卡

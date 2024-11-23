@@ -52,7 +52,7 @@ public:
             cardsBought = j["statistics"]["cards_bought"].get<std::map<std::string, int>>();
             cardsPlayed = j["statistics"]["cards_played"].get<std::map<std::string, int>>();
         } catch (const json::exception& e) {
-            throw std::runtime_error("加载日志数据失败: " + std::string(e.what()));
+            throw std::runtime_error("Échec du chargement des données du journal: " + std::string(e.what())); // 加载日志失败
         }
     }
     
@@ -67,14 +67,14 @@ public:
     void loadFromFile(const std::string& filename) {
         std::ifstream in(filename);
         if (!in) {
-            throw std::runtime_error("无法打开日志文件: " + filename);
+            throw std::runtime_error("Impossible d'ouvrir le fichier journal: " + filename); // 无法打开日志文件:
         }
         
         try {
             json j = json::parse(in);
             loadFromJson(j);
         } catch (const json::exception& e) {
-            throw std::runtime_error("解析日志文件失败: " + std::string(e.what()));
+            throw std::runtime_error("Échec de l'analyse du fichier journal: " + std::string(e.what())); // 解析日志文件失败
         }
     }
     
