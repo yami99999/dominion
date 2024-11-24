@@ -1,0 +1,107 @@
+{
+    "turn_count": 15,
+    "current_player": 2,
+    "players": [
+        {
+            "name": "Alice",
+            "actions": 1,
+            "buys": 1,
+            "coins": 0,
+            "deck": [
+                "Copper", "Copper", "Silver", "Silver", "Gold",
+                "Village", "Market", "Duchy", "Estate"
+            ],
+            "hand": [
+                "Gold", "Silver", "Market", "Village", "Province"
+            ],
+            "discard": [
+                "Copper", "Copper", "Silver", "Duchy", "Estate",
+                "Smithy", "Village", "Market"
+            ],
+            "trash": ["Copper", "Estate"]
+        },
+        {
+            "name": "Bob",
+            "actions": 1,
+            "buys": 1,
+            "coins": 0,
+            "deck": [
+                "Gold", "Silver", "Silver",
+                "Province", "Duchy", "Market", "Smithy", "Province"
+            ],
+            "hand": [
+                "Gold", "Silver", "Village", "Gold", "Laboratory"
+            ],
+            "discard": [
+                "Copper", "Silver", "Gold", "Province",
+                "Market", "Village", "Duchy"
+            ],
+            "trash": ["Copper", "Estate", "Estate"]
+        },
+        {
+            "name": "Charlie",
+            "actions": 1,
+            "buys": 1,
+            "coins": 0,
+            "deck": [
+                "Gold", "Gold", "Silver", "Province",
+                "Duchy", "Market", "Laboratory"
+            ],
+            "hand": [
+                "Gold", "Silver", "Smithy", "Province", "Market"
+            ],
+            "discard": [
+                "Silver", "Gold", "Province", "Duchy",
+                "Village", "Workshop", "Estate"
+            ],
+            "trash": ["Copper", "Estate", "Curse"]
+        }
+    ],
+    "supply": {
+        "Copper": 32,
+        "Silver": 23,
+        "Gold": 18,
+        "Estate": 0,
+        "Duchy": 2,
+        "Province": 1,
+        "Curse": 8,
+        "Village": 4,
+        "Market": 3,
+        "Smithy": 6,
+        "Laboratory": 5,
+        "Workshop": 7,
+        "Militia": 8,
+        "Moat": 7,
+        "Cellar": 6
+    },
+    "game_log": {
+        "start_time": 1709174400,
+        "duration": 1800,
+        "logs": [
+            "14:30:00 - Game started",
+            "14:35:10 - Alice bought Province",
+            "14:40:25 - Bob bought Gold",
+            "14:45:30 - Charlie used Market",
+            "14:50:15 - Alice bought Province",
+            "14:55:20 - Bob used Laboratory",
+            "15:00:00 - Current turn"
+        ],
+        "statistics": {
+            "cards_bought": {
+                "Province": 11,
+                "Duchy": 10,
+                "Gold": 12,
+                "Silver": 17,
+                "Village": 6,
+                "Market": 7,
+                "Laboratory": 5
+            },
+            "cards_played": {
+                "Village": 15,
+                "Market": 12,
+                "Laboratory": 8,
+                "Smithy": 10
+            }
+        }
+    }
+}
