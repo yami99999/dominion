@@ -7,7 +7,7 @@
 #include "Player.h"
 #include "Game.h"
 
-// 1. 村庄 (Village)
+// 1. 村庄 (Village / Village )
 class Village : public Card {
 public:
     Village() : Card("Village", 3, CardType::ACTION) {}
@@ -15,15 +15,15 @@ public:
     void play(Player& player, Game& game) override {
         player.drawCard(1);
         player.addAction(2);
-        game.logAction(player.getName(), "使用了村庄 (+1卡片, +2行动)");
+        game.logAction(player.getName(), "Village utilisé (+1 carte, +2 action)");
     }
     
     std::string getDescription() const override {
-        return "村庄 (3金币)\n效果: +1卡片, +2行动\n说明: 基础的行动链生成卡";
+        return "Village (3 pièces)\nEffet : carte +1, action +2\nDescription : carte de génération de chaîne d'action de base";
     }
 };
 
-// 2. 木工 (Woodcutter)
+// 2. 木工 (Woodcutter / Bûcheron )
 class Woodcutter : public Card {
 public:
     Woodcutter() : Card("Woodcutter", 3, CardType::ACTION) {}
@@ -31,31 +31,31 @@ public:
     void play(Player& player, Game& game) override {
         player.addBuy(1);
         player.addCoin(2);
-        game.logAction(player.getName(), "使用了木工 (+1购买, +2金币)");
+        game.logAction(player.getName(), "Bûcheron utilisé(+1 achat, +2 pièces)");
     }
     
     std::string getDescription() const override {
-        return "木工 (3金币)\n效果: +1购买, +2金币\n说明: 提供额外的购买机会和金币";
+        return "Bûcheron (3 pièces)\nEffet : +1 achat, +2 pièces\nDescription : Offre des achats supplémentaires et des pièces.";
     }
 };
 
-// 3. 民兵 (Militia)
+// 3. 民兵 (Militia / Milice)
 class Militia : public Card {
 public:
     Militia() : Card("Militia", 4, CardType::ACTION) {}
     
     void play(Player& player, Game& game) override {
         player.addCoin(2);
-        game.logAction(player.getName(), "使用了民兵 (+2金币，其他玩家需弃牌至3张)");
+        game.logAction(player.getName(), "Milice utilisé (+2 pièces, les autres joueurs doivent défausser jusqu'à 3 cartes)");
         game.otherPlayersDiscardToThree(player);
     }
     
     std::string getDescription() const override {
-        return "民兵 (4金币)\n效果: +2金币, 其他玩家弃牌至3张\n说明: 攻击卡，迫使其他玩家弃牌";
+        return "Milice  (4 pièces)\nEffet : +2 pièces, les autres joueurs doivent défausser jusqu'à 3 cartes\nDescription : Carte d'attaque qui force les autres joueurs à défausser des cartes.";
     }
 };
 
-// 4. 市场 (Market)
+// 4. 市场 (Market / Marché)
 class Market : public Card {
 public:
     Market() : Card("Market", 5, CardType::ACTION) {}
@@ -65,30 +65,30 @@ public:
         player.addAction(1);
         player.addBuy(1);
         player.addCoin(1);
-        game.logAction(player.getName(), "使用了市场 (+1卡片, +1行动, +1购买, +1金币)");
+        game.logAction(player.getName(), "Marché utilisé (+1 carte, +1 action, +1 achat, +1 pièce)");
     }
     
     std::string getDescription() const override {
-        return "市场 (5金币)\n效果: +1卡片, +1行动, +1购买, +1金币\n说明: 全面提升卡";
+        return "Marché (5 pièces)\nEffet : +1 carte, +1 action, +1 achat, +1 pièce\nDescription : Amélioration globale pour toutes les capacités.";
     }
 };
 
-// 5. 铁匠 (Smithy)
+// 5. 铁匠 (Smithy / Forgeron)
 class Smithy : public Card {
 public:
     Smithy() : Card("Smithy", 4, CardType::ACTION) {}
     
     void play(Player& player, Game& game) override {
         player.drawCard(3);
-        game.logAction(player.getName(), "使用了铁匠 (+3卡片)");
+        game.logAction(player.getName(), "Forgeron utilisé (+3 cartes)");
     }
     
     std::string getDescription() const override {
-        return "铁匠 (4金币)\n效果: +3卡片\n说明: 强力的抽牌卡";
+        return "Forgeron (4 pièces)\nEffet : +3 cartes\nDescription : Carte puissante pour piocher davantage de cartes.";
     }
 };
 
-// 6. 议会厅 (Council Room)
+// 6. 议会厅 (Council Room / Salle du Conseil)
 class CouncilRoom : public Card {
 public:
     CouncilRoom() : Card("Council Room", 5, CardType::ACTION) {}
@@ -97,15 +97,15 @@ public:
         player.drawCard(4);
         player.addBuy(1);
         game.otherPlayersDraw(player, 1);
-        game.logAction(player.getName(), "使用了议会厅 (+4卡片, +1购买, 其他玩家各抽1张)");
+        game.logAction(player.getName(), "alle du Conseil utilisée (+4 cartes, +1 achat, chaque autre joueur pioche 1 carte)");
     }
     
     std::string getDescription() const override {
-        return "议会厅 (5金币)\n效果: +4卡片, +1购买, 其他玩家各抽1张\n说明: 强力的抽牌卡，但会让其他玩家也抽牌";
+        return "Salle du Conseil (5 pièces)\nEffet : +4 cartes, +1 achat, chaque autre joueur pioche 1 carte\nDescription : Carte puissante pour piocher, mais qui permet aussi aux autres joueurs de piocher une carte.";
     }
 };
 
-// 7. 钱庄 (Moneylender)
+// 7. 钱庄 (Moneylender / Trésorerie )
 class Moneylender : public Card {
 public:
     Moneylender() : Card("Moneylender", 4, CardType::ACTION) {}
@@ -113,48 +113,48 @@ public:
     void play(Player& player, Game& game) override {
         if (player.trashCopperFromHand()) {
             player.addCoin(3);
-            game.logAction(player.getName(), "使用了钱庄 (废弃一张铜币, +3金币)");
+            game.logAction(player.getName(), "Trésorerie utilisée (abandonnant un Cuivre, +3 pièces)");
         } else {
-            game.logAction(player.getName(), "使用了钱庄，但没有铜币可废弃");
+            game.logAction(player.getName(), "Trésorerie utilisée, mais aucun Cuivre à abandonner.");
         }
     }
     
     std::string getDescription() const override {
-        return "钱庄 (4金币)\n效果: 废弃一张铜币，获得3金币\n说明: 铜币转化为更多金币的卡片";
+        return "Trésorerie (4 pièces)\nEffet : Abandonnez un Cuivre pour obtenir +3 pièces\nDescription : Carte permettant de transformer un Cuivre en plus de pièces.";
     }
 };
 
-// 8. 护城河 (Moat)
+// 8. 护城河 (Moat / Douves)
 class Moat : public Card {
 public:
     Moat() : Card("Moat", 2, CardType::ACTION) {}
     
     void play(Player& player, Game& game) override {
         player.drawCard(2);
-        game.logAction(player.getName(), "使用了护城河 (+2卡片)");
+        game.logAction(player.getName(), "Douve utilisé (+2 cartes)");
     }
     
     std::string getDescription() const override {
-        return "护城河 (2金币)\n效果: +2卡片，可以防御攻击\n说明: 既能抽牌又能防御的实用卡片";
+        return "Douve  (2 pièces)\nEffet : +2 cartes, peut bloquer les attaques\nDescription : Carte pratique qui permet à la fois de piocher et de se défendre.";
     }
 };
 
-// 9. 工场 (Workshop)
+// 9. 工场 (Workshop / Atelier)
 class Workshop : public Card {
 public:
     Workshop() : Card("Workshop", 3, CardType::ACTION) {}
     
     void play(Player& player, Game& game) override {
         game.gainCardUpToCost(player, 4);
-        game.logAction(player.getName(), "使用了工场 (获得一张不超过4块的卡片)");
+        game.logAction(player.getName(), "Atelier utilisé (obtenez une carte coûtant jusqu’à 4 pièces)");
     }
     
     std::string getDescription() const override {
-        return "工场 (3金币)\n效果: 获得一张不超过4金币的卡片\n说明: 帮助获得中低费用卡片";
+        return "Atelier (3 pièces)\nEffet : Obtenez une carte coûtant jusqu’à 4 pièces\nDescription : Utile pour acquérir des cartes de faible ou moyen coût.";
     }
 };
 
-// 10. 地窖 (Cellar)
+// 10. 地窖 (Cellar / Cave)
 class Cellar : public Card {
 public:
     Cellar() : Card("Cellar", 2, CardType::ACTION) {}
@@ -163,15 +163,15 @@ public:
         player.addAction(1);
         int discarded = player.discardAndDraw();
         game.logAction(player.getName(), 
-            "使用了地窖 (+1行动, 弃掉" + std::to_string(discarded) + "张牌并重抽)");
+            "Cave utilisée (+1 action, défaussez " + std::to_string(discarded) + "cartes et piochez à nouveau)");
     }
     
     std::string getDescription() const override {
-        return "地窖 (2金币)\n效果: +1行动，可以弃任意张牌，然后抽相同数量的牌\n说明: 帮助优化手牌的实用卡片";
+        return "Cave (2 pièces)\nEffet : +1 action, vous pouvez défausser n’importe quel nombre de cartes, puis en piocher autant\nDescription : Carte pratique pour optimiser votre main.";
     }
 };
 
-// 1. 女巫 (Witch): +2卡片，其他玩家各获得一张诅咒卡
+// 11. 女巫 (Witch / Sorcière ): +2卡片，其他玩家各获得一张诅咒卡
 class Witch : public Card {
 public:
     Witch() : Card("Witch", 5, CardType::ACTION) {}
@@ -179,30 +179,30 @@ public:
     void play(Player& player, Game& game) override {
         player.drawCard(2);
         game.otherPlayersGainCurse(player);
-        game.logAction(player.getName(), "使用了女巫 (+2卡片，其他玩家各获得一张诅咒卡)");
+        game.logAction(player.getName(), "Sorcière utilisée (+2 cartes, chaque autre joueur reçoit une carte Malédiction)");
     }
     
     std::string getDescription() const override {
-        return "女巫 (5金币)\n效果: +2卡片，其他玩家各获得一张诅咒卡\n说明: 强力的攻击卡，可以给对手负分";
+        return "Sorcière (5 pièces)\nEffet : +2 cartes, chaque autre joueur reçoit une carte Malédiction\nDescription : Carte d'attaque puissante qui inflige des points négatifs aux adversaires.";
     }
 };
 
-// 2. 盗贼 (Thief): 查看其他玩家牌库顶的2张牌，可以废除其中的财宝牌并获得之
+// 12. 盗贼 (Thief / Voleur): 查看其他玩家牌库顶的2张牌，可以废除其中的财宝牌并获得之
 class Thief : public Card {
 public:
     Thief() : Card("Thief", 4, CardType::ACTION) {}
     
     void play(Player& player, Game& game) override {
         game.resolveThiefEffect(player);
-        game.logAction(player.getName(), "使用了盗贼 (查看并可能获得其他玩家的财宝牌)");
+        game.logAction(player.getName(), "Voleur utilisé (regardez et potentiellement gagnez des cartes Trésor des autres joueurs)");
     }
     
     std::string getDescription() const override {
-        return "盗贼 (4金币)\n效果: 查看其他玩家牌库顶的2张牌，可以废除其中的财宝牌并获得之\n说明: 攻击卡，可以偷取对手的财宝";
+        return "Voleur (4 pièces)\nEffet : Regardez les 2 premières cartes des pioches des autres joueurs, éliminez leurs cartes Trésor et gagnez-les\nDescription : Carte d'attaque permettant de voler les trésors des adversaires.";
     }
 };
 
-// 3. 花园 (Gardens): 每10张牌价值1分
+// 13. 花园 (Gardens / Jardin ): 每10张牌价值1分
 class Gardens : public Card {
 public:
     Gardens() : Card("Gardens", 4, CardType::VICTORY) {}
@@ -215,26 +215,26 @@ public:
     }
     
     std::string getDescription() const override {
-        return "花园 (4金币)\n效果: 每拥有10张牌价值1分\n说明: 特殊的胜利点数卡，鼓励收集更多的牌";
+        return "Jardin (4 pièces)\nEffet : 1 point de victoire pour chaque 10 cartes que vous possédez\nDescription : Carte de victoire spéciale qui récompense une grande quantité de cartes.";
     }
 };
 
-// 4. 教堂 (Chapel): 可以废除手牌中最多4张牌
+// 14. 教堂 (Chapel / Chapelle): 可以废除手牌中最多4张牌
 class Chapel : public Card {
 public:
     Chapel() : Card("Chapel", 2, CardType::ACTION) {}
     
     void play(Player& player, Game& game) override {
         game.resolveChapelEffect(player);
-        game.logAction(player.getName(), "使用了教堂 (可以废除手牌中最多4张牌)");
+        game.logAction(player.getName(), "Chapelle utilisée (jusqu’à 4 cartes de la main supprimées)");
     }
     
     std::string getDescription() const override {
-        return "教堂 (2金币)\n效果: 可以废除手牌中最多4张牌\n说明: 帮助优化牌组的实用卡片";
+        return "Chapelle (2 pièces)\nEffet : Supprimez jusqu’à 4 cartes de votre main\nDescription : Carte pratique pour optimiser le contenu de votre deck.";
     }
 };
 
-// 5. 盛宴 (Feast): 废除此牌，获得一张不超过5块的卡片
+// 15. 盛宴 (Feast / Festin ): 废除此牌，获得一张不超过5块的卡片
 class Feast : public Card {
 public:
     Feast() : Card("Feast", 4, CardType::ACTION) {}
@@ -249,16 +249,16 @@ public:
             size_t index = std::distance(playerHand.begin(), it);
             player.trashCardFromHand(index);
             game.gainCardUpToCost(player, 5);
-            game.logAction(player.getName(), "使用了盛宴 (废除此牌，获得一张不超过5块的卡片)");
+            game.logAction(player.getName(), "Festin utilisé (cette carte est supprimée, obtenez une carte coûtant jusqu’à 5 pièces)");
         }
     }
     
     std::string getDescription() const override {
-        return "盛宴 (4金币)\n效果: 废除此牌，获得一张不超过5块的卡片\n说明: 一次性升级卡片的好选择";
+        return "Festin (4 pièces)\nEffet : Supprimez cette carte et obtenez une carte coûtant jusqu’à 5 pièces\nDescription : Bonne option pour améliorer les cartes de votre deck.";
     }
 };
 
-// 6. 实验室 (Laboratory): +2卡片，+1行动
+// 16. 实验室 (Laboratory): +2卡片，+1行动
 class Laboratory : public Card {
 public:
     Laboratory() : Card("Laboratory", 5, CardType::ACTION) {}
@@ -266,10 +266,10 @@ public:
     void play(Player& player, Game& game) override {
         player.drawCard(2);
         player.addAction(1);
-        game.logAction(player.getName(), "使用了实验室 (+2卡片, +1行动)");
+        game.logAction(player.getName(), "Laboratoire utilisé (+2 cartes, +1 action)");
     }
     
     std::string getDescription() const override {
-        return "实验室 (5金币)\n效果: +2卡片, +1行动\n说明: 强力的抽牌和行动生成卡";
+        return "Laboratoire (5 pièces)\nEffet : +2 cartes, +1 action\nDescription : Carte puissante pour piocher et générer des actions supplémentaires.";
     }
 };

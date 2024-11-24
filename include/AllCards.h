@@ -12,5 +12,5 @@
 #include "Utils.h"
 #include "GameLogger.h"
 
-// 确保所有卡片类型都被正确包含
+// Assurez-vous que tous les types de cartes sont correctement inclus  确保所有卡片类型都被正确包含
 using CardPtr = std::shared_ptr<Card>;

@@ -39,7 +39,7 @@ void Player::discardHand() {
 
 void Player::initializeDeck() {
     try {
-        // 初始牌组：7张铜币和3张庄园
+        // Deck initial : 7 pièces de cuivre et 3 manoirs  初始牌组：7张铜币和3张庄园
         for (int i = 0; i < 7; i++) {
             deck.push_back(Card::createCard("Copper"));
         }
@@ -47,21 +47,21 @@ void Player::initializeDeck() {
             deck.push_back(Card::createCard("Estate"));
         }
         shuffleDeck();
-        drawCard(5); // 抽取起始手牌
+        drawCard(5); // Tirer la main de départ  抽取起始手牌
     } catch (const std::exception& e) {
-        std::cerr << "初始化牌组失败: " << e.what() << std::endl;
+        std::cerr << "Échec de l'initialisation du deck : " << e.what() << std::endl;
         throw;
     }
 }
 
 void Player::showDeckStatus() const {
-    std::cout << "牌堆: " << deck.size() << " 张, "
-              << "手牌: " << hand.size() << " 张, "
-              << "弃牌: " << discard.size() << " 张\n";
+    std::cout << "Deck: " << deck.size() << " cartes, "
+              << "Main: " << hand.size() << " cartes, "
+              << "Défausse: " << discard.size() << " cartes\n";
 }
 
 void Player::showHand() const {
-    std::cout << "手牌: ";
+    std::cout << "Main: ";
     for (const auto& card : hand) {
         std::cout << card->getName() << " ";
     }
@@ -74,37 +74,37 @@ bool Player::hasActionCard() const {
 }
 
 bool Player::playAction(const std::string& cardName, Game& game) {
-    // 检查是否有足够的行动点
+    // Vérifiez s'il y a suffisamment de points d'action  检查是否有足够的行动点
     if (actions <= 0) {
-        std::cout << "没有足够的行动点\n";
+        std::cout << "Pas assez de points d'action\n";
         return false;
     }
     
-    // 查找卡片
+    // Rechercher une carte  查找卡片
     auto it = std::find_if(hand.begin(), hand.end(),
         [&cardName](const auto& card) {
             return Utils::equalIgnoreCase(card->getName(), cardName);
         });
     
     if (it == hand.end()) {
-        std::cout << "找不到该卡片\n";
+        std::cout << "La carte est introuvable\n";
         return false;
     }
     
-    // 检查是否是行动卡
+    // Vérifiez s'il s'agit d'une carte mobile  检查是否是行动卡
     if ((*it)->getType() != CardType::ACTION) {
-        std::cout << "这不是一张行动卡\n";
+        std::cout << "Ceci n'est pas une carte d'action\n";
         return false;
     }
     
-    // 使用卡片
+    // utiliser des cartes  使用卡片
     try {
         (*it)->play(*this, game);
         discard.push_back(*it);
         hand.erase(it);
         return true;
     } catch (const std::exception& e) {
-        std::cout << "使用卡片时发生错误: " << e.what() << "\n";
+        std::cout << "Une erreur s'est produite lors de l'utilisation de la carte: " << e.what() << "\n";
         return false;
     }
 }
@@ -148,8 +148,8 @@ bool Player::playTreasure(const std::string& cardName) {
         return false;
     }
     
-    // 创建一个临时Game对象，因为财富卡不使用游戏状态
-    static Game dummyGame(0);  // 使用静态对象避免重复创建
+    // Créez un objet de jeu temporaire car les cartes Fortune n'utilisent pas l'état du jeu  创建一个临时Game对象，因为财富卡不使用游戏状态
+    static Game dummyGame(0);  // Utilisez des objets statiques pour éviter les créations répétées  使用静态对象避免重复创建
     (*it)->play(*this, dummyGame);
     discard.push_back(*it);
     hand.erase(it);
@@ -167,30 +167,30 @@ std::vector<std::shared_ptr<Card>> Player::getTreasureCards() const {
 }
 
 void Player::playAllTreasures() {
-    std::cout << "\n自动使用所有财富卡:\n";
+    std::cout << "\nUtilisation automatique de toutes les cartes Trésor  :\n";
     
     auto treasures = getTreasureCards();
     if (!treasures.empty()) {
         for (const auto& card : treasures) {
-            // 从手牌中移除
+            // Retirer de la main  从手牌中移除
             auto it = std::find(hand.begin(), hand.end(), card);
             if (it != hand.end()) {
-                // 使用卡片
+                // utiliser des cartes  使用卡片
                 card->play(*this, *static_cast<Game*>(nullptr));  // 修改这里，移除创建新游戏的代码
                 
-                // 移到弃牌堆
+                // Déplacer vers la pile de défausse  移到弃牌堆
                 discard.push_back(*it);
                 hand.erase(it);
                 
-                std::cout << "使用了 " << card->getName() << " (+";
+                std::cout << "utilisé " << card->getName() << " (+";
                 if (card->getName() == "Copper") std::cout << "1";
                 else if (card->getName() == "Silver") std::cout << "2";
                 else if (card->getName() == "Gold") std::cout << "3";
-                std::cout << " 金币)\n";
+                std::cout << " pièces)\n";
             }
         }
         
-        std::cout << "当前总金币: " << coins << "\n";
+        std::cout << "Total actuel des pièces : " << coins << "\n";
     }
 }
 
@@ -217,12 +217,12 @@ bool Player::trashCopperFromHand() {
 
 void Player::discardDownTo(int count) {
     while (hand.size() > count) {
-        std::cout << "当前手牌: ";
+        std::cout << "Main actuelle: ";
         for (size_t i = 0; i < hand.size(); i++) {
             std::cout << i + 1 << "." << hand[i]->getName() << " ";
         }
         
-        std::cout << "\n请选择要弃掉的卡片编号: ";
+        std::cout << "\n Veuillez sélectionner le numéro de carte à défausser : ";
         int choice;
         std::cin >> choice;
         
@@ -234,12 +234,12 @@ void Player::discardDownTo(int count) {
 }
 
 int Player::discardAndDraw() {
-    std::cout << "当前手牌: ";
+    std::cout << "Main actuelle: ";
     for (size_t i = 0; i < hand.size(); i++) {
         std::cout << i + 1 << "." << hand[i]->getName() << " ";
     }
     
-    std::cout << "\n请输入要弃掉的卡片编号（用空格分隔，输入0结束）: ";
+    std::cout << "\nEntrez les numéros des cartes à défausser (séparés par des espaces, entrez 0 pour terminer) : ";
     int count = 0;
     std::vector<int> choices;
     int choice;
@@ -251,7 +251,7 @@ int Player::discardAndDraw() {
         }
     }
     
-    // 从大到小排序，以便从后往前删除
+    // Trier du plus grand au plus petit pour supprimer de l'arrière vers l'avant  从大到小排序，以便从后往前删除
     std::sort(choices.rbegin(), choices.rend());
     
     for (int idx : choices) {
@@ -259,14 +259,14 @@ int Player::discardAndDraw() {
         hand.erase(hand.begin() + idx);
     }
     
-    // 抽相同数量的牌
+    // piocher le même nombre de cartes  抽相同数量的牌
     drawCard(count);
     return count;
 }
 
 std::vector<std::shared_ptr<Card>> Player::getAllCards() const {
     std::vector<std::shared_ptr<Card>> allCards;
-    // 合并所有牌组中的卡片
+    // Fusionner toutes les cartes du jeu  合并所有牌组中的卡片
     allCards.insert(allCards.end(), deck.begin(), deck.end());
     allCards.insert(allCards.end(), hand.begin(), hand.end());
     allCards.insert(allCards.end(), discard.begin(), discard.end());
@@ -297,7 +297,7 @@ void Player::showCardDescription(const std::string& cardName) const {
             return;
         }
     }
-    std::cout << "在手牌中找不到该卡片。\n";
+    std::cout << "La carte est introuvable dans la main.\n";
 }
 
 void Player::trashCardFromHand(size_t index) {
@@ -314,7 +314,7 @@ void Player::trashCardFromDeck(size_t index) {
     }
 }
 
-// JSON 序列化相关方法实现
+// Implémentation de la méthode liée à la sérialisation JSON  JSON 序列化相关方法实现
 json Player::toJson() const {
     json j;
     j["name"] = name;
@@ -322,7 +322,7 @@ json Player::toJson() const {
     j["buys"] = buys;
     j["coins"] = coins;
     
-    // 序列化牌组
+    // Deck sérialisé  序列化牌组
     j["deck"] = json::array();
     for (const auto& card : deck) {
         j["deck"].push_back(card->getName());
@@ -352,12 +352,12 @@ void Player::fromJson(const json& j) {
     buys = j["buys"].get<int>();
     coins = j["coins"].get<int>();
     
-    // 清空现有牌组
+    // Effacer la terrasse existante  清空现有牌组
     deck.clear();
     hand.clear();
     discard.clear();
     
-    // 加载牌组
+    // Pont de chargement  加载牌组
     for (const auto& cardJson : j["deck"]) {
         deck.push_back(Card::fromJson(cardJson));
     }

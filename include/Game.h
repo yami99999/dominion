@@ -9,7 +9,7 @@
 #include "Utils.h"
 #include "GameLogger.h"
 
-class Card;  // 前向声明
+class Card;  // 前向声明 déclaration à terme
 
 class Game {
 private:

@@ -5,7 +5,7 @@
 #include <fstream>
 #include "Card.h"
 
-class Game;  // 前向声明
+class Game;  // 前向声明 déclaration à terme
 
 class Player {
 private:
@@ -21,18 +21,18 @@ private:
 public:
     explicit Player(const std::string& name);
     
-    // 基础操作
+    // Opérations de base  基础操作
     void drawCard(int count = 1);
     void shuffleDeck();
     void discardHand();
     void initializeDeck();
     
-    // 显示相关
+    // Afficher en rapport  显示相关
     void showDeckStatus() const;
     void showHand() const;
     void showCardDescription(const std::string& cardName) const;
     
-    // 资源管理
+    // Gestion des ressources  资源管理
     void addAction(int amount) { actions += amount; }
     void addBuy(int amount) { buys += amount; }
     void addCoin(int amount) { coins += amount; }
@@ -46,7 +46,7 @@ public:
     void setBuys(int value) { buys = value; }
     void setCoins(int value) { coins = value; }
     
-    // 牌组操作
+    // fonctionnement du pont  牌组操作
     void addToDiscard(std::shared_ptr<Card> card) { discard.push_back(card); }
     void addToDeck(std::shared_ptr<Card> card) { deck.push_back(card); }
     void addToHand(std::shared_ptr<Card> card) { hand.push_back(card); }
@@ -58,14 +58,14 @@ public:
     void trashCardFromHand(size_t index);
     void trashCardFromDeck(size_t index);
     
-    // 游戏动作
+    // action de jeu   游戏动作
     bool playAction(const std::string& cardName, Game& game);
     bool playTreasure(const std::string& cardName);
     void playAllTreasures();
     bool hasActionCard() const;
     bool hasMoat() const;
     
-    // 状态查询
+    // Requête d'état  状态查询
     const std::string& getName() const { return name; }
     int getActions() const { return actions; }
     int getBuys() const { return buys; }
@@ -79,7 +79,7 @@ public:
     std::vector<std::shared_ptr<Card>> getAllCards() const;
     std::vector<std::shared_ptr<Card>> getTreasureCards() const;
     
-    // 存档相关
+    // Lié aux archives  存档相关
     void saveState(std::ofstream& out) const;
     void loadState(std::ifstream& in);
     json toJson() const;

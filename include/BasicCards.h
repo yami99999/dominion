@@ -3,76 +3,76 @@
 #include "Player.h"
 #include "Game.h"
 
-// 铜币卡
+// 铜币卡 Copper Cuivre
 class Copper : public Card {
 public:
     Copper() : Card("Copper", 0, CardType::TREASURE) {}
     void play(Player& player, Game& game) override;
     std::string getDescription() const override {
-        return "铜币 (0金币)\n效果: +1金币\n说明: 基础的金币卡";
+        return "Cuivre (0 pièces)\nEffet : +1 pièce\nDescription : Carte de base pour générer des pièces.";
     }
 };
 
-// 银币卡
+// 银币卡 Silver Argent
 class Silver : public Card {
 public:
     Silver() : Card("Silver", 3, CardType::TREASURE) {}
     void play(Player& player, Game& game) override;
     std::string getDescription() const override {
-        return "银币 (3金币)\n效果: +2金币\n说明: 中级金币卡";
+        return "Argent (3 pièces)\nEffet : +2 pièces\nDescription : Carte intermédiaire pour générer des pièces.";
     }
 };
 
-// 金币卡
+// 金币卡 Gold Or
 class Gold : public Card {
 public:
     Gold() : Card("Gold", 6, CardType::TREASURE) {}
     void play(Player& player, Game& game) override;
     std::string getDescription() const override {
-        return "金币 (6金币)\n效果: +3金币\n说明: 高级金币卡";
+        return "Or (6 pièces)\nEffet : +3 pièces\nDescription : Carte avancée pour générer des pièces.";
     }
 };
 
-// 庄园卡
+// 庄园卡 Estate Domaine 
 class Estate : public Card {
 public:
     Estate() : Card("Estate", 2, CardType::VICTORY) {}
     void play(Player& player, Game& game) override {}
     int getVictoryPoints() const override { return 1; }
     std::string getDescription() const override {
-        return "庄园 (2金币)\n效果: 1胜利点\n说明: 基础的胜利点数卡";
+        return "Domaine (2 pièces)\nEffet : 1 point de victoire\nDescription : Carte de base pour marquer des points de victoire.";
     }
 };
 
-// 公爵领地卡
+// 公爵领地卡 Duché
 class Duchy : public Card {
 public:
     Duchy() : Card("Duchy", 5, CardType::VICTORY) {}
     void play(Player& player, Game& game) override {}
     int getVictoryPoints() const override { return 3; }
     std::string getDescription() const override {
-        return "公爵领地 (5金币)\n效果: 3胜利点\n说明: 中级胜利点数卡";
+        return "Duché (5 pièces)\nEffet : 3 points de victoire\nDescription : Carte intermédiaire pour marquer des points de victoire.";
     }
 };
 
-// 行省卡
+// 行省卡 Provinces
 class Province : public Card {
 public:
     Province() : Card("Province", 8, CardType::VICTORY) {}
     void play(Player& player, Game& game) override {}
     int getVictoryPoints() const override { return 6; }
     std::string getDescription() const override {
-        return "行省 (8金币)\n效果: 6胜利点\n说明: 高级胜利点数卡";
+        return "Province (8 pièces)\nEffet : 6 points de victoire\nDescription : Carte avancée pour marquer des points de victoire.";
     }
 };
 
-// 诅咒卡
+// 诅咒卡 Malédiction
 class Curse : public Card {
 public:
     Curse() : Card("Curse", 0, CardType::VICTORY) {}
     void play(Player& player, Game& game) override {}
     int getVictoryPoints() const override { return -1; }
     std::string getDescription() const override {
-        return "诅咒 (0金币)\n效果: -1胜利点\n说明: 负面效果卡牌";
+        return "Malédiction (0 pièces)\nEffet : -1 point de victoire\nDescription : Carte à effet négatif.";
     }
 }; 

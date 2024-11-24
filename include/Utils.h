@@ -8,7 +8,7 @@
 
 class Utils {
 public:
-    // 字符串处理
+    // Traitement des chaînes  字符串处理
     static std::string toLower(std::string str) {
         std::transform(str.begin(), str.end(), str.begin(), ::tolower);
         return str;
@@ -18,7 +18,7 @@ public:
         return toLower(str1) == toLower(str2);
     }
     
-    // 随机数生成
+    // Génération de nombres aléatoires  随机数生成
     static int getRandomNumber(int min, int max) {
         static std::random_device rd;
         static std::mt19937 gen(rd());
@@ -26,7 +26,7 @@ public:
         return dis(gen);
     }
     
-    // 字符串分割
+    // Fractionnement des chaînes  字符串分割
     static std::vector<std::string> split(const std::string& str, char delimiter) {
         std::vector<std::string> tokens;
         std::string token;
@@ -37,7 +37,7 @@ public:
         return tokens;
     }
     
-    // 格式化输出
+    // Sortie formatée  格式化输出
     static void printDivider(char c = '-', int length = 40) {
         std::cout << std::string(length, c) << "\n";
     }

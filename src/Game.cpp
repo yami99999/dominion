@@ -9,7 +9,8 @@
 
 using json = nlohmann::json;
 
-// 定义所有可用的王国卡
+// 定义所有可用的王国卡 
+// Définir toutes les cartes de royaume disponibles
 const std::vector<std::string> Game::ALL_KINGDOM_CARDS = {
     "Village", "Woodcutter", "Militia", "Market",
     "Smithy", "CouncilRoom", "Moneylender", "Moat",
@@ -20,18 +21,19 @@ const std::vector<std::string> Game::ALL_KINGDOM_CARDS = {
 Game::Game(int numPlayers, bool randomKingdom, const std::string& kingdomSet) 
     : currentPlayer(0), turnCount(1) {
     
-    std::cout << "\n=== 创建新游戏 ===\n";
-    std::cout << "玩家数量: " << numPlayers << "\n";
+    std::cout << "\n=== Créer un nouveau jeu ===\n";
+    std::cout << "Nombre de joueurs: " << numPlayers << "\n";
     
-    // 创建玩家
+    // 创建玩家 Créer les joueurs
     for (int i = 0; i < numPlayers; i++) {
         std::string playerName;
-        std::cout << "请输入玩家 " << (i + 1) << " 的名字: ";
+        std::cout << "Entrez le nom du joueur " << (i + 1) << " : ";
         std::getline(std::cin, playerName);
         players.emplace_back(playerName);
     }
     
-    // 根据参数选择王国卡初始化方式
+    // 根据参数选择王国卡初始化方式 
+    // Choisir l'initialisation des cartes de royaume en fonction des paramètres
     std::vector<std::string> selectedCards;
     if (randomKingdom) {
         selectedCards = getRandomKingdomCards();
@@ -41,10 +43,10 @@ Game::Game(int numPlayers, bool randomKingdom, const std::string& kingdomSet)
         selectedCards = selectKingdomCards();
     }
     
-    // 记录选择的王国卡
+    // 记录选择的王国卡 Enregistrer les cartes de royaume choisies
     logger.logKingdomCardSelection(selectedCards);
     
-    // 初始化游戏
+    // 初始化游戏 Initialiser le jeu
     initialize(selectedCards);
 }
 
@@ -66,24 +68,25 @@ std::vector<std::string> Game::getPresetKingdomCards(const std::string& setName)
         return it->second;
     }
     
-    std::cout << "未知的预设套装，使用随机选择\n";
+    std::cout << "Ensemble prédéfini inconnu, sélection aléatoire utilisée\n"; // 未知套装, 随机选择
     return getRandomKingdomCards();
 }
 
-void Game::initialize() {
-    // 默认初始化，使用随机选择的王国卡
+void Game::initialize() { 
+    // 默认初始化，使用随机选择的王国卡 
+    // Initialisation par défaut, utilisation des cartes de royaume choisies au hasard
     initialize(getRandomKingdomCards());
 }
 
 std::vector<std::string> Game::selectPresetCards() {
-    Utils::printHeader("预设套装选择");
-    std::cout << "可用的预设套装:\n";
-    std::cout << "1. 初学者套装\n";
-    std::cout << "2. 进阶套装\n";
-    std::cout << "3. 随机套装\n";
+    Utils::printHeader("Choix des ensembles prédéfinis"); // 预设套装选择
+    std::cout << "Ensembles prédéfinis disponibles:\n"; // 可用的预设套装
+    std::cout << "1. Ensemble débutant\n";      // 1. 初学者套装
+    std::cout << "2. Ensemble avancé\n";   // 2. 进阶套装
+    std::cout << "3. Ensemble aléatoire\n";   // 3. 随机套装
     
     int choice;
-    std::cout << "\n请选择套装 (1-3): ";
+    std::cout << "\nSélectionnez un ensemble (1-3): ";   // 请选择套装 (1-3)
     std::cin >> choice;
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     
@@ -107,18 +110,20 @@ std::vector<std::string> Game::selectPresetCards() {
 void Game::initialize(const std::vector<std::string>& selectedCards) {
     try {
         // 初始化基础卡供应堆
+        // Initialisation des piles de cartes de base
         const std::vector<std::pair<std::string, int>> basicCards = {
-            {"Copper", 60},    // 铜币 - 60张
-            {"Silver", 40},    // 银币 - 40张
-            {"Gold", 30},      // 金币 - 30张
-            {"Estate", players.size() <= 2 ? 8 + players.size()*3 : 12 + players.size()*3},    // 庄园(!!难以修复, 所以直接加玩家数量*3)
-            {"Duchy", players.size() <= 2 ? 8 : 12},     // 公爵领地
-            {"Province", players.size() <= 2 ? 8 : 12},  // 行省
+            {"Copper", 60},    // 铜币 - 60张  Pièce de cuivre - 60 cartes
+            {"Silver", 40},    // 银币 - 40张  Pièce d'argent - 40 cartes
+            {"Gold", 30},      // 金币 - 30张  Pièce d'or - 30 cartes
+            {"Estate", players.size() <= 2 ? 8 + players.size()*3 : 12 + players.size()*3}, // Domaine   // 庄园(!!难以修复, 所以直接加玩家数量*3) 
+            {"Duchy", players.size() <= 2 ? 8 : 12},     // 公爵领地 // Duché
+            {"Province", players.size() <= 2 ? 8 : 12},  // 行省 // Province
             {"Curse", players.size() == 2 ? 10 : 
-                     (players.size() == 3 ? 20 : 30)}    // 诅咒卡
+                     (players.size() == 3 ? 20 : 30)}    // 诅咒卡 // Carte malédiction
         };
 
         // 初始化基础卡
+        // Initialisation des cartes de base
         for (const auto& [cardName, count] : basicCards) {
             supply[cardName] = std::vector<std::shared_ptr<Card>>();
             for (int i = 0; i < count; i++) {
@@ -127,6 +132,7 @@ void Game::initialize(const std::vector<std::string>& selectedCards) {
         }
         
         // 初始化选中的王国卡
+        // Initialisation des cartes de royaume sélectionnées
         for (const auto& cardName : selectedCards) {
             try {
                 supply[cardName] = std::vector<std::shared_ptr<Card>>();
@@ -134,32 +140,34 @@ void Game::initialize(const std::vector<std::string>& selectedCards) {
                     supply[cardName].push_back(Card::createCard(cardName));
                 }
             } catch (const std::exception& e) {
-                std::cerr << "初始化卡片失败: " << cardName << " - " << e.what() << std::endl;
-                throw std::runtime_error("初始化王国卡失败: " + cardName);
-            }
+                std::cerr << "Échec de l'initialisation de la carte: " << cardName << " - " << e.what() << std::endl; // 初始化卡片失败:
+                throw std::runtime_error("Échec de l'initialisation de la carte de royaume : " + cardName); // 初始化王国卡失败:
+            } 
         }
         
         // 为每个玩家初始化牌组
+        // Initialisation du deck de chaque joueur
         for (auto& player : players) {
             // 从供应堆中取出初始卡牌
-            for (int i = 0; i < 7; i++) {  // 7张铜币
+            // Retirer les cartes initiales de la pile
+            for (int i = 0; i < 7; i++) {  // 7张铜币   7 pièces de cuivre
                 if (!supply["Copper"].empty()) {
                     player.addToDiscard(supply["Copper"].back());
                     supply["Copper"].pop_back();
                 }
             }
-            for (int i = 0; i < 3; i++) {  // 3张庄园
+            for (int i = 0; i < 3; i++) {  // 3张庄园 3 domaines
                 if (!supply["Estate"].empty()) {
                     player.addToDiscard(supply["Estate"].back());
                     supply["Estate"].pop_back();
                 }
             }
             player.shuffleDeck();
-            player.drawCard(5); // 抽取起始手牌
+            player.drawCard(5); // 抽取起始手牌  Tirer les cartes initiales
         }
         
     } catch (const std::exception& e) {
-        std::cerr << "游戏初始化失败: " << e.what() << std::endl;
+        std::cerr << "Échec de l'initialisation du jeu: " << e.what() << std::endl;  // 游戏初始化失败
         throw;
     }
 }
@@ -168,14 +176,15 @@ void Game::playGame() {
     while (!isGameOver()) {
         playTurn();
         
-        // 回合结束后的命令处理循环
+        // 回合结束后的命令处理循环  
+        // Boucle de gestion des commandes après chaque tour
         while (true) {
-            std::cout << "\n输入 'save' 保存游戏，'stats' 查看统计信息，'go' 继续游戏: ";
+            std::cout << "\nTapez 'save' pour sauvegarder le jeu, 'stats' pour voir les statistiques, 'go' pour continuer : ";  // 输入 'save' 保存游戏，'stats' 查看统计信息，'go' 继续游戏
             std::string command;
             std::getline(std::cin, command);
             
             if (Utils::equalIgnoreCase(command, "save")) {
-                std::cout << "请输入存档文件名 (直接回车使用默认名称 'dominion_save.txt'): ";
+                std::cout << "Veuillez entrer un nom de fichier pour la sauvegarde (appuyez sur Entrée pour utiliser le nom par défaut * dominion_save.txt *: "; // 请输入存档文件名 (直接回车使用默认名称 'dominion_save.txt'):
                 std::string filename;
                 std::getline(std::cin, filename);
                 
@@ -186,48 +195,49 @@ void Game::playGame() {
                 }
                 
                 // 检查文件是否已存在
+                // Vérifier si le fichier existe déjà
                 std::ifstream checkFile(filename);
                 if (checkFile.good()) {
                     checkFile.close();
-                    std::cout << "文件 '" << filename << "' 是否确认保存? (y/n): ";
+                    std::cout << "Le fichier '" << filename << "' existe déjà. Voulez-vous le remplacer ? (y/n): ";  // 是否确认保存? (y/n)
                     std::string response;
                     std::getline(std::cin, response);
                     
                     if (!Utils::equalIgnoreCase(response, "y") && 
                         !Utils::equalIgnoreCase(response, "yes")) {
-                        std::cout << "取消保存\n";
-                        continue;  // 返回命令输入循环
+                        std::cout << "Sauvegarde annulée\n"; // 取消保存
+                        continue;  // 返回命令输入循环 // Retourner à la boucle des commandes
                     }
                 }
                 
                 saveGame(filename);
-                continue;  // 返回命令输入循环
+                continue;  // 返回命令输入循环 // Retourner à la boucle des commandes
             } 
             else if (Utils::equalIgnoreCase(command, "stats")) {
                 displayStats();
-                continue;  // 返回命令输入循环
+                continue;  // 返回命令输入循环 // Retourner à la boucle des commandes
             }
             else if (Utils::equalIgnoreCase(command, "go")) {
-                break;  // 退出命令输入循环，继续游戏
+                break;  // Quittez la boucle de saisie de commande et continuez le jeu 退出命令输入循环，继续游戏
             }
             else if (!command.empty()) {
-                std::cout << "无效的命令。请输入 'save'、'stats' 或 'go'\n";
-                continue;  // 返回命令输入循环
+                std::cout << "Commande invalide. Veuillez entrer 'save', 'stats' ou 'go'\n"; // 无效的命令。请输入 'save'、'stats' 或 'go'
+                continue;  // Retour à la boucle d'entrée de commande 返回命令输入循环
             }
-            // 如果输入为空，继续循环
+            // Si l'entrée est vide, continuez la boucle 如果输入为空，继续循环
         }
     }
     
-    // 游戏结束时自动保存
+    // Sauvegarder automatiquement à la fin du jeu 游戏结束时自动保存
     std::time_t now = std::time(nullptr);
     char timeStr[20];
     strftime(timeStr, sizeof(timeStr), "%Y%m%d_%H%M%S", localtime(&now));
     std::string autoSaveFilename = "dominion_autosave_" + std::string(timeStr) + ".txt";
     
-    std::cout << "\n游戏结束，正在创建自动存档...\n";
+    std::cout << "\nGame over, création de la sauvegarde automatique...\n"; // 游戏结束，正在创建自动存档...
     saveGame(autoSaveFilename);
     
-    // 显示最终结果
+    // afficher le résultat final 显示最终结果
     auto scores = calculateFinalScores();
     displayResults(scores);
 }
@@ -235,29 +245,29 @@ void Game::playGame() {
 void Game::playTurn() {
     Player& currentPlayerRef = players[currentPlayer];
     
-    std::cout << "\n========== 回合 " << turnCount << " - " 
+    std::cout << "\n========== Tour " << turnCount << " - " 
               << currentPlayerRef.getName() << " ==========\n";
     
-    // 显示牌堆状态
+    // Afficher l'état du deck 显示牌堆状态
     currentPlayerRef.showDeckStatus();
     
-    // 显示当前手牌
+    // Afficher la main actuelle 显示当前手牌
     std::cout << "[" << currentPlayerRef.getName() << "] ";
     currentPlayerRef.showHand();
     
-    // 行动阶段
+    // étape d'action 行动阶段
     playActionPhase();
     
-    // 购买阶段
+    // étape d'achat 购买阶段
     playBuyPhase();
     
-    // 清理阶段
+    // phase de nettoyage 清理阶段
     playCleanupPhase();
     
-    // 切换到下一个玩家
+    // Passer au joueur suivant 切换到下一个玩家
     currentPlayer = (currentPlayer + 1) % players.size();
     
-    // 如果回到第一个玩家，回合数加1
+    // Si vous revenez au premier joueur, le numéro du tour est augmenté de 1 如果回到第一个玩家，回合数加1
     if (currentPlayer == 0) {
         turnCount++;
     }
@@ -266,25 +276,25 @@ void Game::playTurn() {
 void Game::playActionPhase() {
     Player& currentPlayerRef = players[currentPlayer];
     
-    std::cout << "\n[回合 " << turnCount << " - 行动阶段]\n";
+    std::cout << "\n[Tour " << turnCount << " - Phase d'Action]\n";
     
     while (currentPlayerRef.getActions() > 0) {
-        std::cout << "[回合 " << turnCount << "] " 
+        std::cout << "[Tour " << turnCount << "] " 
                  << currentPlayerRef.getName() 
-                 << " 的行动点数: " << currentPlayerRef.getActions() << "\n\n";
+                 << " a: " << currentPlayerRef.getActions() << " points d'action\n\n";
         
-        // 显示当前手牌
+        // Afficher la main actuelle 显示当前手牌
         currentPlayerRef.showHand();
         std::cout << "\n";
         
         if (!currentPlayerRef.hasActionCard()) {
-            std::cout << "没有行动卡可以使用\n";
+            std::cout << "Il n'y a pas de cartes d'action disponibles\n";
             break;
         }
         
-        std::cout << "[回合 " << turnCount << "] " 
+        std::cout << "[Tour " << turnCount << "] " 
                  << currentPlayerRef.getName() 
-                 << " 选择要使用的行动卡 ('show' 查看手牌, 'info 卡片名称' 查看说明，'skip' 跳过): ";
+                 << " choisissez une carte d'action à utiliser ('show' pour voir les cartes, 'info [nom de carte]' pour voir la description, 'skip' pour passer): ";
         
         std::string input;
         std::getline(std::cin, input);
@@ -301,16 +311,16 @@ void Game::playActionPhase() {
             std::string cardName = input.substr(5);
             currentPlayerRef.showCardDescription(cardName);
             continue;
-        }
+               continue;        }
         
-        // 尝试使用行动卡
+        // Essayez d'utiliser des cartes mobiles 尝试使用行动卡
         try {
             if (currentPlayerRef.playAction(input, *this)) {
                 currentPlayerRef.useAction();
                 logger.recordCardPlayed(input);
             }
         } catch (const std::exception& e) {
-            std::cout << "使用行动卡失败: " << e.what() << "\n";
+            std::cout << "Échec de l'utilisation de la carte mobile: " << e.what() << "\n"; // 使用行动卡失败:
             continue;
         }
     }
@@ -319,23 +329,23 @@ void Game::playActionPhase() {
 void Game::playBuyPhase() {
     Player& currentPlayerRef = players[currentPlayer];
     
-    std::cout << "\n=== " << currentPlayerRef.getName() << " 的购买阶段 ===\n";
+    std::cout << "\n=== Phase d'Achat de " << currentPlayerRef.getName() << "  ===\n";
     currentPlayerRef.playAllTreasures();
     
     while (currentPlayerRef.getBuys() > 0) {
         int availableCoins = currentPlayerRef.getCoins();
-        std::cout << "\n[" << currentPlayerRef.getName() << "] 剩余购买次数: " 
+        std::cout << "\n[" << currentPlayerRef.getName() << "] Nombre d'achats restants: " 
                  << currentPlayerRef.getBuys() << "\n";
         
-        // 显示可购买的卡片
+        // Afficher les cartes disponibles à l'achat 显示可购买的卡片
         displaySupplyPiles();
         
-        // 显示可用金币
-        std::cout << "\n[" << currentPlayerRef.getName() << "] 可用金币: " 
+        // Afficher les pièces disponibles 显示可用金币
+        std::cout << "\n[" << currentPlayerRef.getName() << "] Pièces disponibles: " 
                  << availableCoins << "\n";
         
         std::cout << "[" << currentPlayerRef.getName() 
-                 << "] 请输入卡片名称进行购买，或输入 'done' 结束购买阶段: ";
+                 << "] Entrez le nom de la carte à acheter, ou 'done' pour terminer la phase d'achat: ";
         
         std::string input;
         std::getline(std::cin, input);
@@ -350,7 +360,7 @@ void Game::playBuyPhase() {
         if (it != supply.end() && !it->second.empty()) {
             int cardCost = it->second[0]->getCost();
             if (cardCost <= availableCoins) {
-                // 购买卡片
+                // acheter une carte 购买卡片
                 std::shared_ptr<Card> boughtCard = it->second.back();
                 it->second.pop_back();
                 currentPlayerRef.addToDiscard(boughtCard);
@@ -359,26 +369,26 @@ void Game::playBuyPhase() {
                 
                 logger.recordCardBought(it->first);
                 logger.logAction(currentPlayerRef.getName(), 
-                    "购买了 " + it->first + " (花费: " + std::to_string(cardCost) + " 金币)");
+                    "a acheté " + it->first + " (coût: " + std::to_string(cardCost) + " pièces)");
                 
-                std::cout << "成功购买 " << it->first << "!\n";
+                std::cout << "Achat de " << it->first << " réussi!\n";
                 
                 if (currentPlayerRef.getBuys() == 0) {
-                    std::cout << "没有剩余购买次数了\n";
+                    std::cout << "Plus de tentatives d'achat disponibles\n";
                     break;
                 }
                 if (currentPlayerRef.getCoins() == 0) {
-                    std::cout << "没有剩余金币了\n";
+                    std::cout << "Plus de pièces disponibles\n";
                     break;
                 }
             } else {
-                std::cout << "金币不足！需要 " << cardCost << " 金币\n";
+                std::cout << "Pas assez de pièces! Il vous faut " << cardCost << " pièces\n";
             }
         } else {
             if (it == supply.end()) {
-                std::cout << "找不到该卡片\n";
+                std::cout << "Carte introuvable\n";
             } else {
-                std::cout << "该卡片已售罄\n";
+                std::cout << "Carte épuisée\n";
             }
         }
     }
@@ -394,16 +404,16 @@ void Game::playCleanupPhase() {
 }
 
 bool Game::isGameOver() const {
-    // 1. 检查Province堆是否为空
+    // 1. Vérifiez si le tas Province est vide 检查Province堆是否为空
     if (isProvinceEmpty()) {
-        std::cout << "\n*** 游戏结束: Province 已耗尽! ***\n";
+        std::cout << "\n*** Fin du jeu: La pile de Province est épuisée! ***\n";
         return true;
     }
     
-    // 2. 检查是否有任意三堆卡牌堆空（括所有类型的卡）
+    // 2. Vérifiez si trois piles de cartes sont vides (y compris tous les types de cartes) 检查是否有任意三堆卡牌堆空（括所有类型的卡）
     int emptyPiles = getEmptyPiles();
     if (emptyPiles >= 3) {
-        std::cout << "\n*** 游戏结束: 已有 " << emptyPiles << " 个供应堆耗尽! ***\n";
+        std::cout << "\n*** Fin du jeu: " << emptyPiles << " piles de cartes sont épuisées! ***\n";
         return true;
     }
     
@@ -418,7 +428,7 @@ bool Game::isProvinceEmpty() const {
 int Game::getEmptyPiles() const {
     int emptyPiles = 0;
     
-    // 检查所有供应堆，包括基础卡和王国卡
+    // Vérifiez toutes les piles de fournitures, y compris les cartes de base et les cartes de royaume. 检查所有供应堆，包括基础卡和王国卡
     for (const auto& [cardName, pile] : supply) {
         if (pile.empty()) {
             emptyPiles++;
@@ -432,110 +442,110 @@ void Game::saveGame(const std::string& filename) {
     try {
         json saveData;
         
-        // 保存基本游戏信息
+        // Enregistrer les informations de base du jeu 保存基本游戏信息
         saveData["turn_count"] = turnCount;
         saveData["current_player"] = currentPlayer;
         
-        // 保存玩家信息
+        // Enregistrer les informations du joueur 保存玩家信息
         json playersJson = json::array();
         for (const auto& player : players) {
             playersJson.push_back(player.toJson());
         }
         saveData["players"] = playersJson;
         
-        // 保存供应堆状态
+        // Enregistrer l'état du tas d'approvisionnement 保存供应堆状态
         json supplyJson;
         for (const auto& [cardName, pile] : supply) {
             supplyJson[cardName] = pile.size();
         }
         saveData["supply"] = supplyJson;
         
-        // 保存游戏日志
+        // Enregistrer le journal du jeu 保存游戏日志
         saveData["game_log"] = logger.toJson();
         
-        // 写入文件
+        // écrire un fichier 写入文件
         std::ofstream out(filename);
         if (!out) {
-            throw std::runtime_error("无法创建存档文件: " + filename);
+            throw std::runtime_error("Impossible de créer le fichier de sauvegarde: " + filename);
         }
         out << std::setw(4) << saveData << std::endl;
         
-        std::cout << "游戏已成功保存到 " << filename << "\n";
+        std::cout << "e jeu a été sauvegardé avec succès dans " << filename << "\n";
         
     } catch (const std::exception& e) {
-        std::cout << "保存游戏时发生错误: " << e.what() << "\n";
+        std::cout << "Erreur lors de la sauvegarde du jeu: " << e.what() << "\n";
         throw;
     }
 }
 
 void Game::loadGame(const std::string& filename) {
-    std::cout << "\n正在加载游戏...\n";
+    std::cout << "\nChargement du jeu...\n";
     
     try {
-        // 读取文件
+        // lire le fichier 读取文件
         std::ifstream in(filename);
         if (!in) {
-            throw std::runtime_error("无法打开存档文件: " + filename);
+            throw std::runtime_error("Impossible d'ouvrir le fichier de sauvegarde: " + filename);
         }
         
-        // 解析JSON
+        // Analyser JSON 解析JSON
         json saveData;
         try {
             in >> saveData;
         } catch (const json::exception& e) {
-            throw std::runtime_error("解析存档文件失败: " + std::string(e.what()));
+            throw std::runtime_error("Échec de l'analyse du fichier d'archive: " + std::string(e.what())); // 解析存档文件失败:
         }
         
-        // 加载基本信息
+        // Charger les informations de base 加载基本信息
         turnCount = saveData["turn_count"].get<int>();
         currentPlayer = saveData["current_player"].get<int>();
         
-        // 加载玩家信息
+        // Charger les informations du joueur 加载玩家信息
         players.clear();
         for (const auto& playerJson : saveData["players"]) {
             try {
                 std::string playerName = playerJson["name"].get<std::string>();
                 Player player(playerName);
                 
-                // 设置玩家状态
+                // Définir le statut du joueur 设置玩家状态
                 player.setActions(playerJson["actions"].get<int>());
                 player.setBuys(playerJson["buys"].get<int>());
                 player.setCoins(playerJson["coins"].get<int>());
                 
-                // 加载牌组
+                // Pont de chargement 加载牌组
                 for (const auto& cardName : playerJson["deck"]) {
                     try {
                         player.addToDeck(Card::createCard(cardName.get<std::string>()));
                     } catch (const std::exception& e) {
-                        throw std::runtime_error("加载牌组失败: " + std::string(e.what()));
+                        throw std::runtime_error("Échec du chargement du deck: " + std::string(e.what())); // 加载牌组失败
                     }
                 }
                 
-                // 加载手牌
+                // Charger la main 加载手牌
                 for (const auto& cardName : playerJson["hand"]) {
                     try {
                         player.addToHand(Card::createCard(cardName.get<std::string>()));
                     } catch (const std::exception& e) {
-                        throw std::runtime_error("加载手牌失败: " + std::string(e.what()));
+                        throw std::runtime_error("Échec du chargement des cartes de main: " + std::string(e.what())); // 加载手牌失败
                     }
                 }
                 
-                // 加载弃牌堆
+                // Charger la pile de défausse 加载弃牌堆
                 for (const auto& cardName : playerJson["discard"]) {
                     try {
                         player.addToDiscard(Card::createCard(cardName.get<std::string>()));
                     } catch (const std::exception& e) {
-                        throw std::runtime_error("加载弃牌堆失败: " + std::string(e.what()));
+                        throw std::runtime_error("Échec du chargement de la pile de défausse: " + std::string(e.what()));  // 加载弃牌堆失败
                     }
                 }
                 
                 players.push_back(std::move(player));
             } catch (const std::exception& e) {
-                throw std::runtime_error("加载玩家数据失败: " + std::string(e.what()));
+                throw std::runtime_error("Échec du chargement des données du joueur: " + std::string(e.what()));  // 加载玩家数据失败
             }
         }
         
-        // 加载供应堆
+        // Charger le tas d'approvisionnement 加载供应堆
         supply.clear();
         for (const auto& [cardName, count] : saveData["supply"].items()) {
             try {
@@ -544,21 +554,21 @@ void Game::loadGame(const std::string& filename) {
                     supply[cardName].push_back(Card::createCard(cardName));
                 }
             } catch (const std::exception& e) {
-                throw std::runtime_error("加载供应堆失败: " + cardName + " - " + e.what());
+                throw std::runtime_error("Échec du chargement du tas de réserve: " + cardName + " - " + e.what()); // 加载供应堆失败
             }
         }
         
-        // 加载游戏日志
+        // Charger le journal de jeu 加载游戏日志
         if (saveData.contains("game_log")) {
             logger.fromJson(saveData["game_log"]);
         }
         
-        std::cout << "游戏已从 " << filename << " 加载\n";
-        std::cout << "当前回合: " << turnCount << "\n";
-        std::cout << "当前玩家: " << players[currentPlayer].getName() << "\n";
+        std::cout << "Le jeu: " << filename << " est chargé\n";
+        std::cout << "Tour actuel: " << turnCount << "\n";
+        std::cout << "Player actuel: " << players[currentPlayer].getName() << "\n";
         
     } catch (const std::exception& e) {
-        throw std::runtime_error("加载游戏失败: " + std::string(e.what()));
+        throw std::runtime_error("Échec du chargement du jeu: " + std::string(e.what())); // 加载游戏失败
     }
 }
 
@@ -580,12 +590,12 @@ std::vector<std::pair<std::string, int>> Game::calculateFinalScores() const {
 }
 
 void Game::displayResults(const std::vector<std::pair<std::string, int>>& scores) {
-    std::cout << "\n=== 游戏束 ===\n\n";
-    std::cout << "最终得分:\n";
+    std::cout << "\n=== jeu terminé ===\n\n";
+    std::cout << "score final:\n";
     
     int highestScore = scores[0].second;
     for (const auto& [name, score] : scores) {
-        std::cout << name << ": " << score << " 点";
+        std::cout << name << ": " << score << " point";
         if (score == highestScore) {
             std::cout << " 🏆";
         }
@@ -594,9 +604,9 @@ void Game::displayResults(const std::vector<std::pair<std::string, int>>& scores
 }
 
 void Game::displayFinalState() const {
-    std::cout << "\n=== 游戏结束状态 ===\n";
-    std::cout << "总回合数: " << turnCount << "\n";
-    std::cout << "空的供应堆:\n";
+    std::cout << "\n=== Statut de fin de partie ===\n";
+    std::cout << "Nombre total de tours: " << turnCount << "\n";
+    std::cout << "tas de provisions vide:\n";
     
     for (const auto& [cardName, pile] : supply) {
         if (pile.empty()) {
@@ -607,17 +617,17 @@ void Game::displayFinalState() const {
 }
 
 void Game::displayStats() {
-    std::cout << "\n=== 游戏统计信息 ===\n";
+    std::cout << "\n=== statistiques du jeu ===\n";
     
-    // 显示供应堆状态
-    std::cout << "供应堆状态:\n";
+    // Afficher l'état de la réserve 显示供应堆状态
+    std::cout << "état du tas de réserve:\n";
     std::cout << std::string(40, '-') << "\n";
-    std::cout << std::setw(15) << "卡片名称" 
-              << std::setw(10) << "剩余数量" << "\n";
+    std::cout << std::setw(15) << "Nom de la carte | " 
+              << std::setw(10) << "Quantité restante" << "\n";
     std::cout << std::string(40, '-') << "\n";
     
-    // 按类型分组显示
-    // 首先示基础财宝卡
+    // Affichage regroupé par type 按类型分组显示
+    // Montrez d'abord la carte au trésor de base 首先示基础财宝卡
     for (const auto& [cardName, pile] : supply) {
         if (cardName == "Copper" || cardName == "Silver" || cardName == "Gold") {
             std::cout << std::setw(15) << cardName 
@@ -625,7 +635,7 @@ void Game::displayStats() {
         }
     }
     
-    // 然后显示胜利点数卡和诅咒卡
+    // Affichez ensuite la carte de points de victoire et la carte de malédiction 然后显示胜利点数卡和诅咒卡
     for (const auto& [cardName, pile] : supply) {
         if (cardName == "Estate" || cardName == "Duchy" || 
             cardName == "Province" || cardName == "Curse") {
@@ -634,7 +644,7 @@ void Game::displayStats() {
         }
     }
     
-    // 最后显示王国卡
+    // Carte du Royaume montrée en dernier 最后显示王国卡
     for (const auto& [cardName, pile] : supply) {
         if (cardName != "Copper" && cardName != "Silver" && cardName != "Gold" &&
             cardName != "Estate" && cardName != "Duchy" && 
@@ -646,8 +656,8 @@ void Game::displayStats() {
     
     std::cout << std::string(40, '-') << "\n";
     
-    // 显示每个玩家的牌堆状态
-    std::cout << "\n玩家牌堆状态:\n";
+    // Affiche l'état du deck de chaque joueur   显示每个玩家的牌堆状态
+    std::cout << "\nStatut du deck joueur:\n";
     for (const auto& player : players) {
         std::cout << player.getName() << ": ";
         player.showDeckStatus();
@@ -657,17 +667,17 @@ void Game::displayStats() {
 void Game::otherPlayersDiscardToThree(const Player& currentPlayer) {
     for (auto& player : players) {
         if (&player != &currentPlayer) {
-            // 检查是否有护城河防御
+            // Vérifiez s'il y a une défense contre les douves   检查是否有护城河防御
             if (!player.hasMoat()) {
                 int handSize = player.getHandSize();
                 if (handSize > 3) {
-                    std::cout << "\n" << player.getName() << " 需要弃掉 " 
-                             << (handSize - 3) << " 张牌\n";
+                    std::cout << "\n" << player.getName() << " Doit être jeté " 
+                             << (handSize - 3) << " cartes\n";
                     player.discardDownTo(3);
                 }
             } else {
-                std::cout << player.getName() << " 使用护城河防御了攻击\n";
-                logger.logAction(player.getName(), "使用护城河防御了攻击");
+                std::cout << player.getName() << " Douves utilisées pour se défendre contre les attaques\n";
+                logger.logAction(player.getName(), "Douves utilisées pour se défendre contre les attaques");
             }
         }
     }
@@ -678,21 +688,21 @@ void Game::otherPlayersDraw(const Player& currentPlayer, int count) {
         if (&player != &currentPlayer) {
             player.drawCard(count);
             logger.logAction(player.getName(), 
-                "抽了 " + std::to_string(count) + " 张牌");
+                "Pioché " + std::to_string(count) + " cartes");
         }
     }
 }
 
 void Game::gainCardUpToCost(Player& player, int maxCost) {
-    std::cout << "\n=== 获得一张卡片 ===\n";
-    std::cout << "可获得的卡片 (最大花费: " << maxCost << "):\n";
+    std::cout << "\n=== obtenir une carte ===\n";
+    std::cout << "Cartes disponibles (dépense maximale: " << maxCost << "):\n";
     std::cout << std::string(40, '-') << "\n";
-    std::cout << std::setw(15) << "卡片名称" 
-             << std::setw(10) << "花费" 
-             << std::setw(10) << "剩余数量" << "\n";
+    std::cout << std::setw(15) << "Nom de la carte | " 
+             << std::setw(10) << "dépenser | " 
+             << std::setw(10) << "Quantité restante" << "\n";
     std::cout << std::string(40, '-') << "\n";
     
-    // 显示可获得的卡片
+    // Afficher les cartes disponibles   显示可获得的卡片
     for (const auto& [cardName, pile] : supply) {
         if (!pile.empty() && pile[0]->getCost() <= maxCost) {
             std::cout << std::setw(15) << cardName 
@@ -702,7 +712,7 @@ void Game::gainCardUpToCost(Player& player, int maxCost) {
     }
     std::cout << std::string(40, '-') << "\n";
     
-    std::cout << "\n请输入要获得的卡片名称: ";
+    std::cout << "\nVeuillez entrer le nom de la carte que vous souhaitez obtenir: ";
     std::string input;
     std::getline(std::cin, input);
     
@@ -716,10 +726,10 @@ void Game::gainCardUpToCost(Player& player, int maxCost) {
         std::shared_ptr<Card> gainedCard = it->second.back();
         it->second.pop_back();
         player.addToDiscard(gainedCard);
-        logger.logAction(player.getName(), "获得 " + it->first);
-        std::cout << "成功获得 " << it->first << "!\n";
+        logger.logAction(player.getName(), "obtenir " + it->first);
+        std::cout << "obtenu avec succès " << it->first << "!\n";
     } else {
-        std::cout << "无法获得卡片\n";
+        std::cout << "Impossible d'obtenir la carte\n";
     }
 }
 
@@ -732,19 +742,19 @@ void Game::showSupplyCardDescription(const std::string& cardName) const {
     if (it != supply.end() && !it->second.empty()) {
         std::cout << "\n" << it->second[0]->getDescription() << "\n";
     } else {
-        std::cout << "在供应堆中找不到该卡片。\n";
+        std::cout << "Cette carte est introuvable dans la réserve.\n";
     }
 }
 
 void Game::displaySupplyPiles() const {
-    std::cout << "\n=== 供应堆状态 ===\n";
+    std::cout << "\n=== état du tas de réserve ===\n";
     
-    // 显示金币卡
-    std::cout << "\n财宝卡:\n";
+    // Afficher la carte de pièce d'or   显示金币卡
+    std::cout << "\nCartes Trésor:\n";
     std::cout << std::string(40, '-') << "\n";
-    std::cout << std::setw(15) << "卡片名称" 
-              << std::setw(10) << "花费" 
-              << std::setw(10) << "剩余数量" << "\n";
+    std::cout << std::setw(15) << "Nom de la carte | " 
+              << std::setw(10) << "dépenser | " 
+              << std::setw(10) << "Quantité restante" << "\n";
     std::cout << std::string(40, '-') << "\n";
     
     const std::vector<std::string> treasureCards = {"Copper", "Silver", "Gold"};
@@ -756,12 +766,12 @@ void Game::displaySupplyPiles() const {
         }
     }
     
-    // 显示胜利点数卡
-    std::cout << "\n胜利点数卡:\n";
+    // Montrer la carte des points de victoire   显示胜利点数卡
+    std::cout << "\nCartes Victoire:\n";
     std::cout << std::string(40, '-') << "\n";
-    std::cout << std::setw(15) << "卡片名称" 
-              << std::setw(10) << "花费" 
-              << std::setw(10) << "剩余数量" << "\n";
+    std::cout << std::setw(15) << "Nom de la carte | " 
+              << std::setw(10) << "dépenser | " 
+              << std::setw(10) << "Quantité restante" << "\n";
     std::cout << std::string(40, '-') << "\n";
     
     const std::vector<std::string> victoryCards = {"Estate", "Duchy", "Province"};
@@ -773,12 +783,12 @@ void Game::displaySupplyPiles() const {
         }
     }
     
-    // 显示诅咒卡
-    std::cout << "\n诅咒卡:\n";
+    // Montrer la carte malédiction   显示诅咒卡
+    std::cout << "\ncarte de malédiction:\n";
     std::cout << std::string(40, '-') << "\n";
-    std::cout << std::setw(15) << "卡片名称" 
-              << std::setw(10) << "花费" 
-              << std::setw(10) << "剩余数量" << "\n";
+    std::cout << std::setw(15) << "Nom de la carte | " 
+              << std::setw(10) << "dépenser | " 
+              << std::setw(10) << "Quantité restante" << "\n";
     std::cout << std::string(40, '-') << "\n";
     
     if (supply.count("Curse") && !supply.at("Curse").empty()) {
@@ -787,16 +797,16 @@ void Game::displaySupplyPiles() const {
                  << std::setw(10) << supply.at("Curse").size() << "\n";
     }
     
-    // 显示行动卡
-    std::cout << "\n动卡:\n";
+    // montrer la carte d'action   显示行动卡
+    std::cout << "\nCartes Action:\n";
     std::cout << std::string(40, '-') << "\n";
-    std::cout << std::setw(15) << "卡片名称" 
-              << std::setw(10) << "花费" 
-              << std::setw(10) << "剩余数量" << "\n";
+    std::cout << std::setw(15) << "Nom de la carte | " 
+              << std::setw(10) << "dépenser | " 
+              << std::setw(10) << "Quantité restante" << "\n";
     std::cout << std::string(40, '-') << "\n";
     
     for (const auto& [cardName, pile] : supply) {
-        // 如果不是基础卡或诅咒卡，就是行动卡
+        // Si ce n'est pas une carte de base ou une carte malédiction, c'est une carte action   如果不是基础卡或诅咒卡，就是行动卡
         if (!pile.empty() && 
             std::find(treasureCards.begin(), treasureCards.end(), cardName) == treasureCards.end() &&
             std::find(victoryCards.begin(), victoryCards.end(), cardName) == victoryCards.end() &&
@@ -812,16 +822,16 @@ void Game::displaySupplyPiles() const {
 void Game::otherPlayersGainCurse(const Player& currentPlayer) {
     for (auto& player : players) {
         if (&player != &currentPlayer) {
-            // 检查是否有护城河防御
+            // Vérifiez s'il y a une défense contre les douves   检查是否有护城河防御
             if (!player.hasMoat()) {
-                // 检查诅咒牌堆是否还有牌
+                // Vérifiez s'il y a encore des cartes dans le paquet de malédiction   检查诅咒牌堆是否还有牌
                 if (!supply["Curse"].empty()) {
                     player.addToDiscard(supply["Curse"].back());
                     supply["Curse"].pop_back();
-                    logger.logAction(player.getName(), "获得了一张诅咒卡");
+                    logger.logAction(player.getName(), "J'ai une carte de malédiction");
                 }
             } else {
-                logger.logAction(player.getName(), "使用护城河防御了女巫的效果");
+                logger.logAction(player.getName(), "Douves utilisées pour se défendre contre l'effet de la sorcière");
             }
         }
     }
@@ -831,7 +841,7 @@ void Game::resolveThiefEffect(Player& currentPlayer) {
     for (auto& player : players) {
         if (&player != &currentPlayer) {
             if (!player.hasMoat()) {
-                // 查看牌库顶的两张牌
+                // Regardez les deux premières cartes du jeu   查看牌库顶的两张牌
                 std::vector<std::shared_ptr<Card>> revealedCards;
                 auto& playerDeck = player.getDeck();
                 
@@ -840,22 +850,22 @@ void Game::resolveThiefEffect(Player& currentPlayer) {
                     playerDeck.pop_back();
                 }
                 
-                // 显示被揭示的牌
-                std::cout << player.getName() << " 揭示的牌: ";
+                // Afficher les cartes révélées   显示被揭示的牌
+                std::cout << player.getName() << " carte révélée: ";
                 for (const auto& card : revealedCards) {
                     std::cout << card->getName() << " ";
                 }
                 std::cout << "\n";
                 
-                // 找出财宝牌
+                // Trouver la carte au trésor   找出财宝牌
                 std::vector<std::shared_ptr<Card>> treasures;
                 std::copy_if(revealedCards.begin(), revealedCards.end(),
                     std::back_inserter(treasures),
                     [](const auto& card) { return card->getType() == CardType::TREASURE; });
                 
-                // 如果有财宝牌，让当前玩家选择一张
+                // S'il y a des cartes trésor, laissez le joueur actuel en choisir une.   如果有财宝牌，让当前玩家选择一张
                 if (!treasures.empty()) {
-                    std::cout << "选择要获得的财宝牌 (输入编号):\n";
+                    std::cout << "Sélectionnez la carte au trésor que vous souhaitez obtenir (entrez le numéro):\n";
                     for (size_t i = 0; i < treasures.size(); i++) {
                         std::cout << i + 1 << ". " << treasures[i]->getName() << "\n";
                     }
@@ -867,11 +877,11 @@ void Game::resolveThiefEffect(Player& currentPlayer) {
                     if (choice > 0 && choice <= treasures.size()) {
                         currentPlayer.addToDiscard(treasures[choice - 1]);
                         logger.logAction(currentPlayer.getName(), 
-                            "从 " + player.getName() + " 获得了 " + treasures[choice - 1]->getName());
+                             " a obtenu " + treasures[choice - 1]->getName()  + "de " + player.getName());
                     }
                 }
                 
-                // 其余的牌放入弃牌堆
+                // Mettez les cartes restantes dans la pile de défausse   其余的牌放入弃牌堆
                 for (const auto& card : revealedCards) {
                     player.addToDiscard(card);
                 }
@@ -883,13 +893,13 @@ void Game::resolveThiefEffect(Player& currentPlayer) {
 void Game::resolveChapelEffect(Player& currentPlayer) {
     int trashCount = 0;
     while (trashCount < 4 && !currentPlayer.getHand().empty()) {
-        std::cout << "当前手牌:\n";
+        std::cout << "Main actuelle:\n";
         const auto& hand = currentPlayer.getHand();
         for (size_t i = 0; i < hand.size(); i++) {
             std::cout << i + 1 << ". " << hand[i]->getName() << "\n";
         }
         
-        std::cout << "选择要废除的牌 (输入0结束): ";
+        std::cout << "Sélectionnez la carte à rubuter (entrez 0 pour terminer): ";
         int choice;
         std::cin >> choice;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -900,14 +910,14 @@ void Game::resolveChapelEffect(Player& currentPlayer) {
             std::string cardName = hand[choice - 1]->getName();
             currentPlayer.trashCardFromHand(choice - 1);
             trashCount++;
-            logger.logAction(currentPlayer.getName(), "废除了 " + cardName);
+            logger.logAction(currentPlayer.getName(), "a rubuté " + cardName);
         }
     }
 }
 
 int Game::calculateGardensPoints(const Player& player) const {
     int totalCards = player.getAllCards().size();
-    return totalCards / 10;  // 每10张牌价值1分
+    return totalCards / 10;  // Toutes les 10 cartes valent 1 point   每10张牌价值1分
 }
 
 void Game::displayKingdomCardInfo(const std::string& cardName) const {
@@ -918,16 +928,16 @@ void Game::displayKingdomCardInfo(const std::string& cardName) const {
 }
 
 std::vector<std::string> Game::selectKingdomCards() {
-    Utils::printHeader("选择王国卡");
-    std::cout << "请选择初始化王国卡的方式:\n";
-    std::cout << "1. 随机选择10张\n";
-    std::cout << "2. 手动选择\n";
-    std::cout << "3. 使用推荐套装\n";
-    std::cout << "4. 查看卡片详细信息\n";
+    Utils::printHeader("Choisissez la carte du Royaume");
+    std::cout << "Veuillez choisir comment initialiser la Kingdom Card:\n";
+    std::cout << "1. Sélectionner 10 cartes au hasard\n";
+    std::cout << "2. Sélectionner manuellement\n";
+    std::cout << "3. Utiliser un ensemble recommandé\n";
+    std::cout << "4. Voir les informations détaillées des cartes\n";
     
     std::vector<std::string> selected;
     while (true) {
-        std::cout << "\n请输入选择 (1-4): ";
+        std::cout << "\nEntrez votre choix (1-4): ";
         int choice;
         std::cin >> choice;
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -946,7 +956,7 @@ std::vector<std::string> Game::selectKingdomCards() {
                 viewCardDetails();
                 continue;
             default:
-                std::cout << "无效的选择，请重试\n";
+                std::cout << "Sélection invalide, veuillez réessayer\n";
                 continue;
         }
         
@@ -955,8 +965,8 @@ std::vector<std::string> Game::selectKingdomCards() {
         }
     }
     
-    // 显示选择结果
-    Utils::printHeader("已选择的王国卡");
+    // Afficher les résultats de la sélection   显示选择结果
+    Utils::printHeader("Carte du Royaume sélectionnée");
     for (const auto& cardName : selected) {
         std::cout << "- " << cardName << "\n";
     }
@@ -968,14 +978,14 @@ std::vector<std::string> Game::manualSelectCards() {
     std::vector<std::string> selected;
     displayAvailableKingdomCards();
     
-    std::cout << "\n请依次输入10张卡片的编号 (输入-1查看卡片详情，-2重新选择):\n";
+    std::cout << "\nVeuillez saisir les numéros des 10 cartes dans l'ordre (saisissez -1 pour afficher les détails de la carte, -2 pour resélectionner) :\n";
     while (selected.size() < 10) {
-        std::cout << "还需选择 " << (10 - selected.size()) << " 张卡片: ";
+        std::cout << "Il vous reste à choisir  " << (10 - selected.size()) << " cartes : ";
         int index;
         std::cin >> index;
         
         if (index == -1) {
-            std::cout << "输入卡片编号查看详情: ";
+            std::cout << "Entrez le numéro de carte pour afficher les détails : ";
             int cardIndex;
             std::cin >> cardIndex;
             if (cardIndex >= 0 && cardIndex < ALL_KINGDOM_CARDS.size()) {
@@ -990,15 +1000,15 @@ std::vector<std::string> Game::manualSelectCards() {
         }
         
         if (index >= 0 && index < ALL_KINGDOM_CARDS.size()) {
-            // 检查是否已选择
+            // Vérifier si sélectionné   检查是否已选择
             if (std::find(selected.begin(), selected.end(), 
                 ALL_KINGDOM_CARDS[index]) != selected.end()) {
-                std::cout << "该卡片已被选择，请选择其他卡片\n";
+                std::cout << "Cette carte a été sélectionnée, veuillez en sélectionner une autre\n";
                 continue;
             }
             selected.push_back(ALL_KINGDOM_CARDS[index]);
         } else {
-            std::cout << "无效的选择，请重试\n";
+            std::cout << "Sélection invalide, veuillez réessayer\n";
         }
     }
     
@@ -1008,7 +1018,7 @@ std::vector<std::string> Game::manualSelectCards() {
 
 void Game::viewCardDetails() {
     displayAvailableKingdomCards();
-    std::cout << "\n输入卡片编号查看详情 (输入-1返回): ";
+    std::cout << "\nEntrez le numéro de la carte pour afficher les détails (entrez -1 pour revenir) : ";
     
     while (true) {
         int index;
@@ -1019,29 +1029,29 @@ void Game::viewCardDetails() {
         if (index >= 0 && index < ALL_KINGDOM_CARDS.size()) {
             displayKingdomCardInfo(ALL_KINGDOM_CARDS[index]);
         } else {
-            std::cout << "无效的编号，请重试\n";
+            std::cout << "Numéro invalide, veuillez réessayer\n";
         }
         
-        std::cout << "\n输入卡片编号查看详情 (输入-1返回): ";
+        std::cout << "\nEntrez le numéro de la carte pour afficher les détails (entrez -1 pour revenir) : ";
     }
 }
 
 std::vector<std::string> Game::getRandomKingdomCards(int count) {
     try {
         std::vector<std::string> availableCards;
-        // 只包含已实现的卡片
+        // Inclure uniquement les cartes implémentées   只包含已实现的卡片
         for (const auto& cardName : ALL_KINGDOM_CARDS) {
             try {
-                // 测试是否可以创建卡片
+                // Tester si la carte peut être créée   测试是否可以创建卡片
                 Card::createCard(cardName);
                 availableCards.push_back(cardName);
             } catch (...) {
-                std::cerr << "警告: 跳过未实现的卡片: " << cardName << std::endl;
+                std::cerr << "Attention : ignorer les cartes non implémentées : " << cardName << std::endl;
             }
         }
         
         if (availableCards.size() < count) {
-            throw std::runtime_error("可用的王国卡数量不足");
+            throw std::runtime_error("Nombre insuffisant de cartes du Royaume disponibles");
         }
         
         std::random_device rd;
@@ -1051,97 +1061,97 @@ std::vector<std::string> Game::getRandomKingdomCards(int count) {
         return availableCards;
         
     } catch (const std::exception& e) {
-        std::cerr << "随机选择王国卡失败: " << e.what() << std::endl;
+        std::cerr << "Échec de la sélection aléatoire des cartes du royaume : " << e.what() << std::endl;
         throw;
     }
 }
 
 void Game::displayAvailableKingdomCards() const {
-    std::cout << "\n可用的王国卡:\n";
+    std::cout << "\nCartes du Royaume disponibles :\n";
     for (size_t i = 0; i < ALL_KINGDOM_CARDS.size(); i++) {
         std::cout << i << ". " << ALL_KINGDOM_CARDS[i] << "\n";
     }
 }
 
 void Game::initializeKingdomCards(const std::vector<std::string>& selectedCards) {
-    std::cout << "\n选择的王国卡:\n";
+    std::cout << "\nCarte du Royaume au choix :\n";
     for (const auto& cardName : selectedCards) {
         supply[cardName] = std::vector<std::shared_ptr<Card>>();
         for (int i = 0; i < 10; i++) {
             supply[cardName].push_back(Card::createCard(cardName));
         }
-        std::cout << "- " << cardName << " (10张)\n";
+        std::cout << "- " << cardName << " (10 photos)\n";
     }
 }
 
 void Game::displayGameState() const {
-    Utils::printHeader("游戏状态");
-    std::cout << "回合数: " << turnCount << "\n";
-    std::cout << "当前玩家: " << players[currentPlayer].getName() << "\n";
+    Utils::printHeader("état du jeu");
+    std::cout << "Nombre de tours: " << turnCount << "\n";
+    std::cout << "joueur actuel: " << players[currentPlayer].getName() << "\n";
     
-    // 显示供应堆状态
+    // Afficher l'état de la réserve   显示供应堆状态
     displaySupplyStatus();
     
-    // 显示所有玩家状态
-    Utils::printHeader("玩家状态");
+    // Afficher le statut de tous les joueurs   显示所有玩家状态
+    Utils::printHeader("statut du joueur");
     for (const auto& player : players) {
         displayPlayerStatus(player);
     }
 }
 
 void Game::displaySupplyStatus() const {
-    Utils::printHeader("供应堆状态");
+    Utils::printHeader("état du tas de réserve");
     
-    // 显示基础卡
-    std::cout << "基础卡:\n";
+    // Afficher la carte de base   显示基础卡
+    std::cout << "Carte de base:\n";
     Utils::printDivider('-', 30);
     for (const auto& [cardName, pile] : supply) {
         if (cardName == "Copper" || cardName == "Silver" || cardName == "Gold" ||
             cardName == "Estate" || cardName == "Duchy" || cardName == "Province" ||
             cardName == "Curse") {
             std::cout << std::setw(15) << cardName 
-                     << std::setw(5) << pile.size() << " 张\n";
+                     << std::setw(5) << pile.size() << " ouvrir\n";
         }
     }
     
-    // 显示王国卡
-    std::cout << "\n王国卡:\n";
+    // Afficher la carte du royaume   显示王国卡
+    std::cout << "\nCarte nRoyaume:\n";
     Utils::printDivider('-', 30);
     for (const auto& [cardName, pile] : supply) {
         if (cardName != "Copper" && cardName != "Silver" && cardName != "Gold" &&
             cardName != "Estate" && cardName != "Duchy" && cardName != "Province" &&
             cardName != "Curse") {
             std::cout << std::setw(15) << cardName 
-                     << std::setw(5) << pile.size() << " 张\n";
+                     << std::setw(5) << pile.size() << " ouvrir\n";
         }
     }
 }
 
 void Game::displayPlayerStatus(const Player& player) const {
-    std::cout << "\n玩家: " << player.getName() << "\n";
+    std::cout << "\njoueur: " << player.getName() << "\n";
     Utils::printDivider('-', 30);
-    std::cout << "手牌数: " << player.getHandSize() << "\n";
-    std::cout << "牌堆数: " << player.getDeck().size() << "\n";
-    std::cout << "弃牌堆: " << player.getDiscard().size() << "\n";
+    std::cout << "Nombre de tuiles en main: " << player.getHandSize() << "\n";
+    std::cout << "Nombre de piles de cartes: " << player.getDeck().size() << "\n";
+    std::cout << "Défausse: " << player.getDiscard().size() << "\n";
     
     if (&player == &players[currentPlayer]) {
-        std::cout << "行动点: " << player.getActions() << "\n";
-        std::cout << "购买次数: " << player.getBuys() << "\n";
-        std::cout << "金币: " << player.getCoins() << "\n";
+        std::cout << "point d'action: " << player.getActions() << "\n";
+        std::cout << "Nombre d'achats: " << player.getBuys() << "\n";
+        std::cout << "or: " << player.getCoins() << "\n";
         
-        std::cout << "\n当前手牌:\n";
+        std::cout << "\nMain actuelle:\n";
         player.showHand();
     }
 }
 
 void Game::displayCurrentPlayerStatus() const {
     const Player& currentPlayerRef = players[currentPlayer];
-    Utils::printHeader(currentPlayerRef.getName() + " 的状态");
+    Utils::printHeader(currentPlayerRef.getName() + " statut");
     displayPlayerStatus(currentPlayerRef);
 }
 
 std::string Game::getKingdomCardSetName() const {
-    // 根据当前使用的王国卡判断套装名称
+    // Déterminez le nom de l'ensemble en fonction de la carte Royaume actuellement utilisée.   根据当前使用的王国卡判断套装名称
     std::vector<std::string> currentKingdomCards;
     for (const auto& [cardName, pile] : supply) {
         if (cardName != "Copper" && cardName != "Silver" && cardName != "Gold" &&
@@ -1151,18 +1161,18 @@ std::string Game::getKingdomCardSetName() const {
         }
     }
     
-    // 检查是否匹配预设套装
+    // Vérifiez s'il correspond à l'ensemble par défaut   检查是否匹配预设套装
     if (currentKingdomCards == std::vector<std::string>{
         "Village", "Cellar", "Moat", "Woodcutter", "Workshop",
         "Militia", "Market", "Smithy", "CouncilRoom", "Laboratory"}) {
-        return "初学者套装";
+        return "Pack débutant";
     }
     
     if (currentKingdomCards == std::vector<std::string>{
         "Village", "Chapel", "Witch", "Gardens", "Laboratory",
         "Market", "Smithy", "Militia", "Moneylender", "Thief"}) {
-        return "进阶套装";
+        return "Pack avancé";
     }
     
-    return "自定义套装";
+    return "Pack personnalisé";
 } 

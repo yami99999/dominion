@@ -4,11 +4,11 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
-// 前向声明
+// déclaration à terme  前向声明
 class Player;
 class Game;
 
-// 使用 nlohmann::json
+// Utilisation de nlohmann :: json  使用 nlohmann::json
 using json = nlohmann::json;
 
 enum class CardType {
@@ -33,11 +33,11 @@ public:
     virtual int getVictoryPoints() const { return 0; }
     virtual std::string getDescription() const = 0;
     
-    // 添加序列化和反序列化方法的声明
+    // Ajouter des déclarations pour les méthodes de sérialisation et de désérialisation 添加序列化和反序列化方法的声明
     virtual void serialize(std::ofstream& out) const;
     virtual void deserialize(std::ifstream& in);
     
-    // JSON序列化方法
+    // Méthode de sérialisation JSON JSON序列化方法
     virtual json toJson() const {
         json j;
         j["name"] = name;
@@ -46,7 +46,7 @@ public:
         return j;
     }
     
-    // 静态工厂方法
+    // méthode de fabrique statique  静态工厂方法
     static std::shared_ptr<Card> fromJson(const json& j);
     static std::shared_ptr<Card> createCard(const std::string& cardName);
     

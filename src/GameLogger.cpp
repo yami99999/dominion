@@ -22,7 +22,7 @@ void GameLogger::logKingdomCardSelection(const std::vector<std::string>& cards) 
         if (i > 0) cardList += ", ";
         cardList += cards[i];
     }
-    logAction("System", "选择的王国卡: " + cardList);
+    logAction("System", "Carte Royaume au choix: " + cardList);
 }
 
 json GameLogger::toJson() const {

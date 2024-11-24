@@ -17,17 +17,17 @@ private:
 public:
     GameLogger() : startTime(std::time(nullptr)) {}
 
-    // 日志记录方法
+    // Méthode de journalisation 日志记录方法
     void logAction(const std::string& playerName, const std::string& action);
     void recordCardBought(const std::string& cardName);
     void recordCardPlayed(const std::string& cardName);
     void logKingdomCardSelection(const std::vector<std::string>& cards);
 
-    // JSON序列化方法
+    // Méthode de sérialisation JSON JSON序列化方法
     json toJson() const;
     void fromJson(const json& j);
 
-    // 获取器
+    // Obtenir 获取器
     const std::vector<std::string>& getLogs() const { return logs; }
     const std::map<std::string, int>& getCardsBought() const { return cardsBought; }
     const std::map<std::string, int>& getCardsPlayed() const { return cardsPlayed; }
